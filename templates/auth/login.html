@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="card" style="width: 100%; max-width: 400px;">
+        <div class="card-body">
+            <h3 class="card-title text-center mb-4">🔐 Secure Login</h3>
+            
+            {% if session_expired %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>⏰ Session Expired</strong>
+                <p>Your session has expired due to inactivity. Please login again.</p>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endif %}
+            
+            <div id="alertMessage" style="display: none;">
+                <!-- Alert messages will be inserted here -->
+            </div>
+            
+            <form id="loginForm">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Username</label>
+                    <input type="text" class="form-control" id="username" name="username" required autofocus>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Login</button>
+            </form>
+            
+            <hr>
+            <p class="text-center small text-muted">
+                💡 Session expires after 30 minutes of inactivity for security
+            </p>
+            <p class="text-center">Don't have an account? <a href="{% url 'quiz:signup' %}">Sign up here</a></p>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const alertDiv = document.getElementById('alertMessage');
+    
+    // Clear previous messages
+    alertDiv.style.display = 'none';
+    alertDiv.innerHTML = '';
+    
+    const data = { username, password };
+    
+    try {
+        const res = await fetch('{% url "quiz:login" %}', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await res.json();
+        
+        if (result.success) {
+            // Show success message
+            alertDiv.innerHTML = `
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <strong>✅ Success!</strong> ${result.message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            alertDiv.style.display = 'block';
+            
+            // Redirect after 1 second
+            setTimeout(() => {
+                window.location = '{% url "quiz:dashboard" %}';
+            }, 1000);
+        } else {
+            // Show error message
+            let errorMsg = result.message || 'Login failed';
+            let alertClass = res.status === 429 ? 'danger' : 'warning';
+            
+            alertDiv.innerHTML = `
+                <div class="alert alert-${alertClass} alert-dismissible fade show" role="alert">
+                    <strong>⚠️ Login Error</strong>
+                    <p>${errorMsg}</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            alertDiv.style.display = 'block';
+        }
+    } catch (e) {
+        alertDiv.innerHTML = `
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>❌ Error</strong>
+                <p>Network error: ${e.message}</p>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `;
+        alertDiv.style.display = 'block';
+    }
+});
+</script>
+{% endblock %}

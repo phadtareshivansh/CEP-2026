@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+
+{% block title %}Quiz | Saarthi{% endblock %}
+
+{% block content %}
+<section id="quiz-screen">
+    <div class="progress-container">
+        <div class="progress-bar"><div id="progress"></div></div>
+        <p class="progress-text"><span id="current-question">1</span> of <span id="total-questions">5</span></p>
+    </div>
+    <h2 id="question-text">Loading question...</h2>
+    <div class="options">
+        <button id="yes-btn" class="btn-opt" onclick="handleAnswer(1)">✓ Yes, I love this</button>
+        <button id="no-btn" class="btn-opt" onclick="handleAnswer(0)">✕ Not really</button>
+    </div>
+</section>
+
+<section id="stats-screen" class="hidden">
+    <div class="card">
+        <h2>Your Skill Breakdown</h2>
+        <div id="skills-breakdown" class="skills-grid"></div>
+        <button onclick="showResults()" class="btn-primary" style="width: 100%; margin-top: 2rem;">See Career Matches</button>
+        <button onclick="location.reload()" class="btn-secondary" style="width: 100%; margin-top: 1rem;">Retake Quiz</button>
+    </div>
+</section>
+
+<script>
+    const API_BASE_URL = '/api';
+    
+    let questions = [];
+    let currentStep = 0;
+    
+    const RIASEC = {
+        Realistic: { color: '#ef4444', emoji: '🔧', description: 'Practical, hands-on work with tools & nature' },
+        Investigative: { color: '#3b82f6', emoji: '🔬', description: 'Research, analysis & problem-solving' },
+        Artistic: { color: '#f59e0b', emoji: '🎨', description: 'Creative expression & innovation' },
+        Social: { color: '#10b981', emoji: '👥', description: 'Helping people & teamwork' },
+        Enterprising: { color: '#ec4899', emoji: '💼', description: 'Leadership & persuasion' },
+        Conventional: { color: '#8b5cf6', emoji: '📋', description: 'Order, organization & efficiency' }
+    };
+
+    let scores = {
+        Realistic: 0,
+        Investigative: 0,
+        Artistic: 0,
+        Social: 0,
+        Enterprising: 0,
+        Conventional: 0
+    };
+
+    // Initialize quiz
+    async function initQuiz() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/get-questions/`);
+            const data = await response.json();
+            // Handle both array and object responses
+            questions = Array.isArray(data) ? data : (data.questions || []);
+            
+            if (questions.length > 0) {
+                displayQuestion();
+            } else {
+                document.getElementById('question-text').textContent = 'Error: Could not load questions';
+            }
+        } catch (error) {
+            console.error('Error loading questions:', error);
+            document.getElementById('question-text').textContent = 'Error: Could not load questions';
+        }
+    }
+
+    function displayQuestion() {
+        if (currentStep >= questions.length) {
+            showStats();
+            return;
+        }
+
+        const question = questions[currentStep];
+        document.getElementById('question-text').textContent = question.question || 'Question?';
+        document.getElementById('current-question').textContent = currentStep + 1;
+        document.getElementById('total-questions').textContent = questions.length;
+        
+        // Update progress bar
+        const progress = ((currentStep) / questions.length) * 100;
+        document.getElementById('progress').style.width = progress + '%';
+
+        // Reset button styles
+        document.getElementById('yes-btn').classList.remove('disabled');
+        document.getElementById('no-btn').classList.remove('disabled');
+    }
+
+    async function handleAnswer(answer) {
+        if (currentStep >= questions.length) return;
+
+        const question = questions[currentStep];
+        
+        if (answer === 1) {
+            // Yes answer - increment the relevant RIASEC scores
+            if (question.riasec_mapping) {
+                for (const [category, value] of Object.entries(question.riasec_mapping)) {
+                    scores[category] += value;
+                }
+            }
+        }
+
+        // Disable buttons during processing
+        document.getElementById('yes-btn').classList.add('disabled');
+        document.getElementById('no-btn').classList.add('disabled');
+
+        // Save answer to backend
+        try {
+            await fetch(`${API_BASE_URL}/submit-answer/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({
+                    scores: scores
+                })
+            });
+        } catch (error) {
+            console.error('Error saving answer:', error);
+        }
+
+        // Move to next question
+        currentStep++;
+        displayQuestion();
+    }
+
+    function showStats() {
+        document.getElementById('quiz-screen').classList.add('hidden');
+        document.getElementById('stats-screen').classList.remove('hidden');
+        displaySkillsBreakdown();
+    }
+
+    function displaySkillsBreakdown() {
+        const container = document.getElementById('skills-breakdown');
+        container.innerHTML = '';
+
+        for (const [category, score] of Object.entries(scores)) {
+            const percentage = Math.round((score / (questions.length * 2)) * 100); // Assuming max 2 points per q
+            const riasec = RIASEC[category];
+            
+            const skillDiv = document.createElement('div');
+            skillDiv.className = 'skill-card';
+            skillDiv.innerHTML = `
+                <div class="skill-header" style="color: ${riasec.color};">
+                    ${riasec.emoji} ${category}
+                </div>
+                <div class="skill-bar">
+                    <div class="skill-fill" style="width: ${percentage}%; background-color: ${riasec.color};"></div>
+                </div>
+                <div class="skill-percentage">${percentage}%</div>
+            `;
+            container.appendChild(skillDiv);
+        }
+    }
+
+    function showResults() {
+        // Save scores to session before redirecting
+        fetch(`${API_BASE_URL}/submit-answer/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                scores: scores
+            })
+        }).then(() => {
+            // Redirect after scores are saved
+            window.location.href = '{% url "quiz:results" %}';
+        }).catch(error => {
+            console.error('Error saving final scores:', error);
+            // Redirect anyway
+            window.location.href = '{% url "quiz:results" %}';
+        });
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Load dark mode
+    document.addEventListener('DOMContentLoaded', function() {
+        initQuiz();
+    });
+</script>
+{% endblock %}

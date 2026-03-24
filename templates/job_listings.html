@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>💼 Job Listings</h1>
+    
+    <!-- Search -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <input type="text" class="form-control" id="search" placeholder="Job title or company..." value="{{ query }}">
+        </div>
+        <div class="col-md-6">
+            <input type="text" class="form-control" placeholder="Location..." value="{{ location }}">
+        </div>
+    </div>
+
+    <!-- Job Cards -->
+    <div class="row">
+        {% for job in jobs %}
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ job.title }}</h5>
+                    <p class="card-text"><strong>{{ job.company }}</strong></p>
+                    <p class="text-muted">📍 {{ job.location }}</p>
+                    
+                    {% if job.salary_min %}
+                    <p class="text-success">💰 ${{ job.salary_min|floatformat:0 }} - ${{ job.salary_max|floatformat:0 }}</p>
+                    {% endif %}
+                    
+                    <p class="card-text small">{{ job.description|truncatewords:20 }}</p>
+                    
+                    {% if job.job_url %}
+                    <a href="{{ job.job_url }}" target="_blank" class="btn btn-primary btn-sm">View Job</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <p class="text-center text-muted">No jobs found.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

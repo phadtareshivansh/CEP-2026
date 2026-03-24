@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Explore Careers</h1>
+    
+    <!-- Search & Filter -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <input type="text" class="form-control" id="search" placeholder="Search careers..." value="{{ query }}">
+        </div>
+        <div class="col-md-6">
+            <select class="form-select" id="category">
+                <option value="">All Categories</option>
+                {% for cat in categories %}
+                <option value="{{ cat }}" {% if category == cat %}selected{% endif %}>{{ cat }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <!-- Career Cards -->
+    <div class="row">
+        {% for career in careers %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">{{ career.title }}</h5>
+                    <p class="card-text text-muted">{{ career.primary_category }}</p>
+                    <p class="card-text">{{ career.description|truncatewords:15 }}</p>
+                    <div class="mb-3">
+                        {% if career.average_salary_min %}
+                        <small class="text-success">💰 ${{ career.average_salary_min|floatformat:0 }} - ${{ career.average_salary_max|floatformat:0 }}</small><br>
+                        {% endif %}
+                        {% if career.job_growth_rate %}
+                        <small class="text-info">📈 {{ career.job_growth_rate }}% growth</small>
+                        {% endif %}
+                    </div>
+                    <a href="{% url 'quiz:career_detail' career.id %}" class="btn btn-primary btn-sm">View Details</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <p class="text-center text-muted">No careers found matching your search.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+document.getElementById('search').addEventListener('input', function() {
+    const query = this.value;
+    const category = document.getElementById('category').value;
+    window.location = `?q=${query}&category=${category}`;
+});
+
+document.getElementById('category').addEventListener('change', function() {
+    const query = document.getElementById('search').value;
+    const category = this.value;
+    window.location = `?q=${query}&category=${category}`;
+});
+</script>
+{% endblock %}

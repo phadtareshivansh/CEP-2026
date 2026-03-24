@@ -1,0 +1,209 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .assessment-card {
+        border-left: 4px solid #667eea;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        height: 100%;
+    }
+
+    .assessment-card:hover {
+        transform: translateX(5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .assessment-card.top-category-Realistic { border-left-color: #ef4444; }
+    .assessment-card.top-category-Investigative { border-left-color: #3b82f6; }
+    .assessment-card.top-category-Artistic { border-left-color: #f59e0b; }
+    .assessment-card.top-category-Social { border-left-color: #10b981; }
+    .assessment-card.top-category-Enterprising { border-left-color: #ec4899; }
+    .assessment-card.top-category-Conventional { border-left-color: #8b5cf6; }
+
+    .badge-Realistic { background-color: #ef4444 !important; }
+    .badge-Investigative { background-color: #3b82f6 !important; }
+    .badge-Artistic { background-color: #f59e0b !important; }
+    .badge-Social { background-color: #10b981 !important; }
+    .badge-Enterprising { background-color: #ec4899 !important; }
+    .badge-Conventional { background-color: #8b5cf6 !important; }
+
+    .stats-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-box {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        text-align: center;
+    }
+
+    .stat-box h3 {
+        font-size: 2rem;
+        font-weight: 800;
+        margin: 0;
+    }
+
+    .stat-box p {
+        margin: 0.5rem 0 0 0;
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 2rem 0 1rem 0;
+        color: #333;
+    }
+
+    .dark-mode .section-title {
+        color: #fff;
+    }
+
+    .badge-category {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: white;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 2rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        margin: 2rem 0;
+    }
+
+    .dark-mode .empty-state {
+        background: #2a2a2a;
+        color: #fff;
+    }
+
+    .empty-state-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+</style>
+
+<div class="container mt-5">
+    <h1>📊 Your Dashboard</h1>
+    
+    <!-- Stats Section -->
+    {% if assessments %}
+    <div class="stats-section">
+        <div class="stat-box">
+            <h3>{{ assessments|length }}</h3>
+            <p>Total Assessments</p>
+        </div>
+        <div class="stat-box">
+            <h3>{{ assessments.0.top_category|truncatewords:1 }}</h3>
+            <p>Latest Match</p>
+        </div>
+    </div>
+    {% endif %}
+    
+    <div class="row mt-4">
+        <!-- Recent Assessments -->
+        <div class="col-md-8">
+            <h2 class="section-title">📋 Your Assessment History</h2>
+            
+            {% if assessments %}
+                <div class="row g-3">
+                    {% for assessment in assessments %}
+                    <div class="col-md-6">
+                        <a href="{% url 'quiz:assessment_detail' assessment.id %}" style="text-decoration: none; color: inherit;">
+                            <div class="card assessment-card top-category-{{ assessment.top_category }} h-100">
+                                <div class="card-body">
+                                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                                        <h5 class="card-title" style="margin: 0;">
+                                            Assessment
+                                        </h5>
+                                        <span class="badge-category badge-{{ assessment.top_category }}">
+                                            {{ assessment.top_category }}
+                                        </span>
+                                    </div>
+                                    
+                                    <p class="card-text" style="margin: 1rem 0 0 0; color: #666;">
+                                        <strong>Date:</strong> {{ assessment.completed_at|date:"M d, Y - g:i A" }}
+                                    </p>
+
+                                    {% if assessment.scores %}
+                                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #f0f0f0;">
+                                        <p style="font-size: 0.85rem; color: #999; margin: 0 0 0.5rem 0;">Top Scores:</p>
+                                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                            {% for category, score in assessment.scores.items|slice:":3" %}
+                                            <span style="font-size: 0.8rem; background: #f0f0f0; padding: 0.25rem 0.5rem; border-radius: 4px; color: #333;">
+                                                {{ category }}: {{ score }}
+                                            </span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    
+                                    <div style="margin-top: 1rem;">
+                                        <span style="font-size: 0.85rem; color: #667eea; font-weight: 600;">View Details →</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-state-icon">🎯</div>
+                    <h3>No Assessments Yet</h3>
+                    <p>Start your first career assessment to discover your ideal path!</p>
+                    <a href="{% url 'quiz:start_assessment' %}" class="btn btn-primary mt-2">Take Assessment</a>
+                </div>
+            {% endif %}
+
+            {% if assessments|length > 5 %}
+            <div style="margin-top: 2rem; text-align: center;">
+                <a href="{% url 'quiz:history' %}" class="btn btn-outline-primary">View All Assessments</a>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Quick Links -->
+        <div class="col-md-4">
+            <h2 class="section-title">⚡ Quick Actions</h2>
+            <div class="card">
+                <div class="card-body">
+                    <a href="{% url 'quiz:start_assessment' %}" class="btn btn-primary w-100 mb-2">🎯 New Assessment</a>
+                    <a href="{% url 'quiz:skills_assessment' %}" class="btn btn-warning w-100 mb-2">⚡ Skills Gap</a>
+                    <a href="{% url 'quiz:forum' %}" class="btn btn-secondary w-100 mb-2">💬 Forum</a>
+                    <a href="{% url 'quiz:profile' %}" class="btn btn-info w-100 mb-2">👤 Profile</a>
+                    <a href="{% url 'quiz:history' %}" class="btn btn-outline-secondary w-100">📊 History</a>
+                </div>
+            </div>
+
+            <!-- Helper Info -->
+            <div class="card mt-3" style="background: #e3f2fd; border: 1px solid #3b82f6;">
+                <div class="card-body">
+                    <h5 style="color: #1565c0; margin-bottom: 0.5rem;">💡 Pro Tips</h5>
+                    <ul style="font-size: 0.9rem; margin: 0; padding-left: 1.5rem; color: #1565c0;">
+                        <li>Take multiple assessments to track progress</li>
+                        <li>Compare results to find patterns</li>
+                        <li>Use skills gap to plan learning</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Custom filter for Django template to access dict values
+    // This is handled by a custom template filter, but we'll add a fallback
+</script>
+{% endblock %}

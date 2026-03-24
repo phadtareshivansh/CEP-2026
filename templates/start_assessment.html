@@ -1,0 +1,299 @@
+{% extends 'base.html' %}
+
+{% block title %}Start Assessment | Saarthi{% endblock %}
+
+{% block content %}
+<style>
+    .assessment-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 4rem 2rem;
+        text-align: center;
+        border-radius: 0;
+    }
+
+    .assessment-hero h1 {
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+    }
+
+    .assessment-hero p {
+        font-size: 1.2rem;
+        max-width: 600px;
+        margin: 0 auto 2rem;
+        opacity: 0.95;
+    }
+
+    .assessment-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 3rem 2rem;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin: 3rem 0;
+    }
+
+    .info-card {
+        background: #f8f9fa;
+        padding: 2rem;
+        border-radius: 12px;
+        text-align: center;
+        border-left: 4px solid #667eea;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .info-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .info-card-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .info-card h3 {
+        color: #333;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+
+    .info-card p {
+        color: #666;
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+
+    .riasec-preview {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        margin: 2rem 0;
+        border: 2px solid #f0f0f0;
+    }
+
+    .riasec-preview h3 {
+        color: #333;
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+    }
+
+    .riasec-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 1rem;
+    }
+
+    .riasec-badge {
+        padding: 1rem;
+        border-radius: 8px;
+        text-align: center;
+        color: white;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .action-buttons {
+        margin: 3rem 0;
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-start {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-start:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
+
+    .btn-secondary-alt {
+        background: white;
+        color: #667eea;
+        border: 2px solid #667eea;
+        padding: 0.8rem 1.8rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-secondary-alt:hover {
+        background: #667eea;
+        color: white;
+    }
+
+    .assessment-features {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        margin: 2rem 0;
+        border: 2px solid #f0f0f0;
+    }
+
+    .assessment-features h3 {
+        color: #333;
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+    }
+
+    .features-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .features-list li {
+        padding: 0.8rem 0;
+        padding-left: 2rem;
+        position: relative;
+        color: #666;
+        font-size: 0.95rem;
+    }
+
+    .features-list li:before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: #10b981;
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+
+    @media (max-width: 768px) {
+        .assessment-hero h1 {
+            font-size: 2rem;
+        }
+
+        .assessment-hero p {
+            font-size: 1rem;
+        }
+
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .btn-start,
+        .btn-secondary-alt {
+            width: 100%;
+        }
+    }
+
+    .dark-mode .info-card {
+        background: #2a2a2a;
+    }
+
+    .dark-mode .info-card h3 {
+        color: #fff;
+    }
+
+    .dark-mode .info-card p {
+        color: #ccc;
+    }
+
+    .dark-mode .riasec-preview,
+    .dark-mode .assessment-features {
+        background: #2a2a2a;
+        border-color: #444;
+    }
+
+    .dark-mode .riasec-preview h3,
+    .dark-mode .assessment-features h3 {
+        color: #fff;
+    }
+</style>
+
+<div class="assessment-hero">
+    <h1>🎯 Career Interest Assessment</h1>
+    <p>Discover your ideal career path with our science-backed RIASEC assessment. Just 5 minutes to unlock your potential!</p>
+</div>
+
+<div class="assessment-container">
+    <!-- Info Cards -->
+    <div class="info-grid">
+        <div class="info-card">
+            <div class="info-card-icon">⏱️</div>
+            <h3>Quick & Easy</h3>
+            <p>Complete the assessment in about 5 minutes with simple yes/no questions</p>
+        </div>
+        <div class="info-card">
+            <div class="info-card-icon">🎯</div>
+            <h3>Personalized Results</h3>
+            <p>Get career recommendations based on your unique interests and strengths</p>
+        </div>
+        <div class="info-card">
+            <div class="info-card-icon">📚</div>
+            <h3>Career Guidance</h3>
+            <p>Access detailed career pathways and skill recommendations for your profile</p>
+        </div>
+    </div>
+
+    <!-- RIASEC Preview -->
+    <div class="riasec-preview">
+        <h3>What is the RIASEC Model?</h3>
+        <p style="color: #666; margin-bottom: 1.5rem;">We use the proven RIASEC assessment to identify your career interests across six dimensions:</p>
+        <div class="riasec-grid">
+            {% for category, details in riasec.items %}
+            <div class="riasec-badge" style="background-color: {{ details.color }};">
+                <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">{{ details.emoji }}</div>
+                <div>{{ category }}</div>
+                <div style="font-size: 0.8rem; opacity: 0.9;">{{ details.description }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Features -->
+    <div class="assessment-features">
+        <h3>What You'll Get</h3>
+        <ul class="features-list">
+            <li>Your unique RIASEC profile breakdown</li>
+            <li>Ranked career recommendations tailored to you</li>
+            <li>Skills required for your top career matches</li>
+            <li>Learning resources and pathways</li>
+            <li>Save and track your assessment history</li>
+            <li>Compare results from multiple assessments</li>
+        </ul>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="action-buttons">
+        <a href="{% url 'quiz:quiz' %}" class="btn-start">Start Assessment Now →</a>
+        {% if not user.is_authenticated %}
+        <a href="{% url 'quiz:login' %}" class="btn-secondary-alt">Sign In First</a>
+        {% endif %}
+    </div>
+
+    <!-- Info Box -->
+    <div style="background: #e3f2fd; padding: 1.5rem; border-radius: 8px; margin-top: 2rem; border-left: 4px solid #3b82f6;">
+        <p style="color: #1565c0; margin: 0;">
+            <strong>💡 Pro Tip:</strong> Sign in to save your results and track your career journey over time. You can retake the assessment anytime to see how your interests evolve!
+        </p>
+    </div>
+</div>
+{% endblock %}

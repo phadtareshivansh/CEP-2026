@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Career Header -->
+    <div class="row mb-5">
+        <div class="col-lg-8">
+            <h1>{{ career.title }}</h1>
+            <p class="text-muted text-lg">{{ career.primary_category }} Pathway</p>
+            <button class="btn btn-outline-primary" onclick="bookmarkCareer({{ career.id }})">
+                ⭐ Bookmark Career
+            </button>
+        </div>
+    </div>
+
+    <!-- Description -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <h3>About this Career</h3>
+            <p>{{ career.detailed_description|default:career.description }}</p>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h4 class="text-success">💰</h4>
+                    <small class="text-muted">Salary Range</small>
+                    {% if career.average_salary_min %}
+                    <p class="fw-bold">${{ career.average_salary_min|floatformat:0 }} - ${{ career.average_salary_max|floatformat:0 }}</p>
+                    {% else %}
+                    <p>Not available</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h4 class="text-info">📈</h4>
+                    <small class="text-muted">Job Growth</small>
+                    {% if career.job_growth_rate %}
+                    <p class="fw-bold">{{ career.job_growth_rate }}%</p>
+                    {% else %}
+                    <p>Not available</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h4 class="text-warning">⭐</h4>
+                    <small class="text-muted">Rating</small>
+                    <p class="fw-bold">{{ career.average_rating|floatformat:1 }}/5.0</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Requirements -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <h3>Requirements</h3>
+            <p><strong>Education:</strong> {{ career.required_education }}</p>
+            {% if career.certifications %}
+            <p><strong>Certifications:</strong> {{ career.certifications|join:", " }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Skills -->
+    {% if related_skills %}
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <h3>Required Skills</h3>
+            <div class="d-flex flex-wrap gap-2">
+                {% for skill in related_skills %}
+                <span class="badge bg-primary">{{ skill.name }}</span>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Related Jobs -->
+    {% if job_listings %}
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <h3>Job Openings</h3>
+            {% for job in job_listings %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ job.title }}</h5>
+                    <p class="card-text">{{ job.company }} • {{ job.location }}</p>
+                    <p class="text-muted">Posted: {{ job.posted_at|date:"SHORT_DATE_FORMAT" }}</p>
+                    {% if job.job_url %}
+                    <a href="{{ job.job_url }}" target="_blank" class="btn btn-sm btn-outline-primary">View Job</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+function bookmarkCareer(careerId) {
+    fetch(`/api/bookmark/${careerId}/`, { method: 'POST' })
+        .then(r => r.json())
+        .then(data => {
+            alert(data.message);
+            location.reload();
+        })
+        .catch(e => alert('Error: ' + e));
+}
+</script>
+{% endblock %}

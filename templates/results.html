@@ -1,0 +1,222 @@
+{% extends 'base.html' %}
+
+{% block title %}Results | Saarthi{% endblock %}
+
+{% block content %}
+{% if top_category %}
+<div class="container mt-5">
+    <!-- Main Result -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body text-center">
+            <div style="font-size: 4rem; margin: 1rem 0;">{{ top_emoji }}</div>
+            <h2 style="color: {{ top_color }}; margin-bottom: 0.5rem;">{{ top_category }}</h2>
+            <p class="text-muted" style="font-size: 1.1rem;">
+                {% for key, val in riasec.items %}
+                    {% if key == top_category %}
+                        {{ val.description }}
+                    {% endif %}
+                {% endfor %}
+            </p>
+        </div>
+    </div>
+
+    <!-- Your RIASEC Profile -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Your RIASEC Profile</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                {% for category, score in sorted_scores %}
+                    {% for key, val in riasec.items %}
+                        {% if key == category %}
+                        <div class="col-md-6 mb-4">
+                            <div style="margin-bottom: 0.5rem;">
+                                <strong style="color: {{ val.color }};">{{ val.emoji }} {{ category }}</strong>
+                                <span class="badge bg-light text-dark float-end">{{ score|floatformat:1 }}</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" style="width: {% widthratio score 5 100 %}%; background-color: {{ val.color }};" aria-valuenow="{{ score }}" aria-valuemin="0" aria-valuemax="5"></div>
+                            </div>
+                            <small class="text-muted">{{ val.description }}</small>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Your Career Pathway -->
+    {% if career_pathway %}
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">🚀 Your Career Pathway</h5>
+        </div>
+        <div class="card-body">
+            <h5 style="color: #28a745; margin-bottom: 1rem;">{{ career_pathway.primary }}</h5>
+            
+            <div class="mb-4">
+                <h6 class="fw-bold">Recommended Career Roles:</h6>
+                <div class="d-flex flex-wrap gap-2">
+                    {% for role in career_pathway.roles %}
+                    <span class="badge bg-info">{{ role }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <h6 class="fw-bold">Key Skills to Develop:</h6>
+                <ul class="list-unstyled">
+                    {% for skill in career_pathway.skills %}
+                    <li class="mb-2">
+                        <span style="color: #28a745;">✓</span> <strong>{{ skill }}</strong>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div>
+                <h6 class="fw-bold">Next Steps to Get Started:</h6>
+                <ol class="ps-3">
+                    {% for step in career_pathway.next_steps %}
+                    <li class="mb-2">{{ step }}</li>
+                    {% endfor %}
+                </ol>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Top Career Matches -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-info text-white">
+            <h5 class="mb-0">💼 Top Career Matches</h5>
+        </div>
+        <div class="card-body">
+            {% if careers %}
+                <div class="row">
+                    {% for career in careers %}
+                    <div class="col-md-6 mb-3">
+                        <div class="border rounded p-3">
+                            <h6 class="fw-bold" style="color: {{ top_color }};">{{ career.title }}</h6>
+                            <p class="text-muted mb-2">{{ career.description }}</p>
+                            <small class="text-secondary">📌 Required Skills: {{ career.skills }}</small>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted text-center">No specific careers found. Explore more options in the career sections!</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="card shadow-sm">
+        <div class="card-body text-center">
+            <button onclick="downloadResults()" class="btn btn-outline-primary me-2">📥 Download Results</button>
+            <button onclick="shareResults()" class="btn btn-outline-success me-2">📤 Share Results</button>
+            <a href="{% url 'quiz:history' %}" class="btn btn-info me-2">📊 View History</a>
+            <a href="{% url 'quiz:dashboard' %}" class="btn btn-success me-2">📈 Back to Dashboard</a>
+            <button onclick="retakeQuiz()" class="btn btn-warning">🔄 Retake Quiz</button>
+        </div>
+    </div>
+</div>
+
+{% else %}
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-body text-center">
+            <h2>Oops! Something went wrong</h2>
+            <p class="text-muted">We couldn't load your results. Please try the quiz again.</p>
+            <a href="{% url 'quiz:quiz' %}" class="btn btn-primary">🔄 Retake Quiz</a>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<script>
+    function downloadResults() {
+        const topCategory = "{{ top_category }}";
+        const pathway = "{{ career_pathway.primary|escapejs }}";
+        
+        const scores = {
+            {% for category, score in scores.items %}
+            "{{ category }}": {{ score }},
+            {% endfor %}
+        };
+
+        let text = `Saarthi Career Assessment Results\n`;
+        text += `======================================\n\n`;
+        text += `Your Top Match: ${topCategory}\n`;
+        text += `Career Pathway: ${pathway}\n\n`;
+        text += `RIASEC Scores:\n`;
+        text += `--------------------------------------\n`;
+        
+        for (const [key, value] of Object.entries(scores)) {
+            text += `${key}: ${(value).toFixed(1)}\n`;
+        }
+
+        const blob = new Blob([text], { type: 'text/plain' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Saarthi-Results-${topCategory}.txt`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+    }
+
+    function shareResults() {
+        const topCategory = "{{ top_category }}";
+        const text = `I took the Saarthi Career Assessment and my top match is ${topCategory}! 🎯 What's yours?`;
+        
+        if (navigator.share) {
+            navigator.share({
+                title: 'Saarthi Career Assessment',
+                text: text,
+                url: window.location.href
+            });
+        } else {
+            alert('Share this: ' + text);
+        }
+    }
+
+    function retakeQuiz() {
+        // Retake quiz - keeps user logged in, clears session data
+        fetch('/api/clear-quiz-session/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        }).then(response => {
+            if (response.ok) {
+                // Redirect to quiz page
+                window.location.href = '{% url "quiz:quiz" %}';
+            } else {
+                // Fallback if endpoint doesn't exist
+                window.location.href = '{% url "quiz:quiz" %}';
+            }
+        }).catch(err => {
+            // Fallback on error
+            window.location.href = '{% url "quiz:quiz" %}';
+        });
+    }
+    
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+{% endblock %}

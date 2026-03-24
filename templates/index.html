@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Welcome Screen -->
+<section id="welcome-screen">
+    <h1>Confused after 12th?</h1>
+    <p>Let Saarthi guide you to a career that matches your natural interests.</p>
+    <a href="{% url 'quiz:quiz' %}" class="btn-primary" style="display: inline-block; text-decoration: none;">Start Assessment</a>
+    <div id="history-hint" style="margin-top: 2rem; padding: 1rem; background: rgba(79, 70, 229, 0.1); border-radius: 8px; font-size: 0.9rem; color: var(--text);">
+        {% if assessment_count > 0 %}
+            <span>📊 You've completed {{ assessment_count }} assessment(s). <a href="{% url 'quiz:history' %}" style="color: var(--primary); text-decoration: underline;">View history</a></span>
+        {% else %}
+            <span>🚀 Ready to discover your ideal career path?</span>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

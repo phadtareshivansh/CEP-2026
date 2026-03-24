@@ -1,0 +1,334 @@
+{% extends 'base.html' %}
+
+{% block title %}Assessment Details | Saarthi{% endblock %}
+
+{% block content %}
+<style>
+    .detail-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+    }
+
+    .detail-hero h1 {
+        margin: 0;
+        font-size: 2rem;
+    }
+
+    .detail-hero p {
+        margin: 0.5rem 0 0 0;
+        opacity: 0.95;
+    }
+
+    .section-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .section-card h3 {
+        margin-top: 0;
+        color: #333;
+        border-bottom: 2px solid #f0f0f0;
+        padding-bottom: 1rem;
+    }
+
+    .top-category-badge {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        color: white;
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+
+    .badge-Realistic { background-color: #ef4444; }
+    .badge-Investigative { background-color: #3b82f6; }
+    .badge-Artistic { background-color: #f59e0b; }
+    .badge-Social { background-color: #10b981; }
+    .badge-Enterprising { background-color: #ec4899; }
+    .badge-Conventional { background-color: #8b5cf6; }
+
+    .scores-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin: 1.5rem 0;
+    }
+
+    .score-card {
+        padding: 1.5rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 4px solid;
+        text-align: center;
+        color: white;
+    }
+
+    .score-card h4 {
+        margin: 0 0 1rem 0;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: white;
+    }
+
+    .score-value {
+        font-size: 2rem;
+        font-weight: 800;
+        color: white;
+        margin-bottom: 0.5rem;
+    }
+
+    .detail-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin: 1.5rem 0;
+    }
+
+    .detail-item {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 8px;
+    }
+
+    .detail-item-label {
+        font-size: 0.85rem;
+        color: #999;
+        text-transform: uppercase;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .detail-item-value {
+        font-size: 1.2rem;
+        color: #333;
+        font-weight: 600;
+    }
+
+    .career-item {
+        padding: 1.5rem;
+        background: #f8f9fa;
+        border-left: 3px solid #667eea;
+        margin-bottom: 1rem;
+        border-radius: 4px;
+    }
+
+    .career-item h4 {
+        margin: 0 0 0.5rem 0;
+        color: #333;
+    }
+
+    .career-item p {
+        margin: 0.5rem 0;
+        color: #666;
+        font-size: 0.95rem;
+    }
+
+    .skills-tag {
+        display: inline-block;
+        background: white;
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        margin: 0.25rem;
+        border: 1px solid #ddd;
+        color: #333;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-top: 2rem;
+    }
+
+    .btn-action {
+        padding: 0.75rem 1.5rem;
+        border-radius: 6px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s ease;
+    }
+
+    .btn-primary-action {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .btn-primary-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-secondary-action {
+        background: white;
+        color: #667eea;
+        border: 2px solid #667eea;
+    }
+
+    .btn-secondary-action:hover {
+        background: #667eea;
+        color: white;
+    }
+
+    .dark-mode .section-card {
+        background: #2a2a2a;
+        color: #fff;
+    }
+
+    .dark-mode .section-card h3 {
+        color: #fff;
+        border-color: #444;
+    }
+
+    .dark-mode .detail-item,
+    .dark-mode .career-item {
+        background: #333;
+        color: #fff;
+    }
+
+    .dark-mode .detail-item-value,
+    .dark-mode .career-item h4 {
+        color: #fff;
+    }
+
+    @media (max-width: 768px) {
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .btn-action {
+            width: 100%;
+        }
+
+        .scores-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="container mt-5">
+    <!-- Header -->
+    <div class="detail-hero">
+        <h1>🎯 Assessment Details</h1>
+        <p>
+            <strong>Top Match:</strong> {{ assessment.top_category }} | 
+            <strong>Date:</strong> {{ assessment.completed_at|date:"M d, Y - g:i A" }}
+        </p>
+    </div>
+
+    <!-- Top Category Badge -->
+    <div>
+        <span class="top-category-badge badge-{{ assessment.top_category }}">
+            {{ assessment.top_category }} (Primary Interest)
+        </span>
+    </div>
+
+    <!-- Key Info -->
+    <div class="detail-grid">
+        <div class="detail-item">
+            <div class="detail-item-label">Assessment Date</div>
+            <div class="detail-item-value">{{ assessment.completed_at|date:"M d, Y" }}</div>
+        </div>
+        <div class="detail-item">
+            <div class="detail-item-label">Primary Interest</div>
+            <div class="detail-item-value">{{ assessment.top_category }}</div>
+        </div>
+        <div class="detail-item">
+            <div class="detail-item-label">Total Assessments</div>
+            <div class="detail-item-value">{{ request.user.assessments.all.count }}</div>
+        </div>
+    </div>
+
+    <!-- RIASEC Scores -->
+    <div class="section-card">
+        <h3>📊 RIASEC Score Breakdown</h3>
+        <div class="scores-grid">
+            {% for category, score in sorted_scores %}
+            <div class="score-card badge-{{ category }}">
+                <h4>{{ category }}</h4>
+                <div class="score-value">{{ score }}/15</div>
+                <small style="color: rgba(255,255,255,0.9);">Aptitude Score</small>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #f0f0f0;">
+            <h4 style="margin-bottom: 1rem;">Score Ranges:</h4>
+            <p style="color: #666; margin-bottom: 1rem;">
+                <strong>0-3:</strong> Low interest | <strong>4-8:</strong> Moderate interest | <strong>9-12:</strong> Strong interest | <strong>13-15:</strong> Very Strong interest
+            </p>
+        </div>
+    </div>
+
+    <!-- Career Recommendations -->
+    {% if career_pathway %}
+    <div class="section-card">
+        <h3>💼 Recommended Career Pathway</h3>
+        <p style="color: #666; margin-bottom: 1.5rem;">
+            Based on your RIASEC profile, these careers align with your interests and strengths:
+        </p>
+
+        {% for idx, career in career_pathway|slice:":6" %}
+        <div class="career-item">
+            <div style="display: flex; justify-content: space-between; align-items: start;">
+                <div style="flex: 1;">
+                    <h4 style="margin-top: 0;">{{ idx|add:1 }}. {{ career.title }}</h4>
+                    <p>{{ career.description }}</p>
+                    {% if career.skills %}
+                    <div>
+                        <strong style="color: #667eea;">Key Skills:</strong>
+                        <div style="margin-top: 0.5rem;">
+                            {% if career.skills|length > 0 %}
+                                {% for skill in career.skills %}
+                                <span class="skills-tag">{{ skill }}</span>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                <span style="font-size: 2rem; opacity: 0.3; margin-left: 1rem;">💼</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Next Steps -->
+    <div class="section-card" style="background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%); border-left: 4px solid #667eea;">
+        <h3 style="color: #667eea; border-bottom: none; padding-bottom: 0;">🚀 Next Steps</h3>
+        <ul style="margin: 1rem 0; padding-left: 1.5rem; color: #333;">
+            <li>Explore the skills needed for your top career matches</li>
+            <li>Identify skill gaps with your profile</li>
+            <li>Create a learning roadmap for skill development</li>
+            <li>Connect with mentors in your field of interest</li>
+            <li>Retake the assessment periodically to track progress</li>
+        </ul>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+        <a href="{% url 'quiz:start_assessment' %}" class="btn-action btn-primary-action">
+            🔄 Retake Assessment
+        </a>
+        <a href="{% url 'quiz:skills_assessment' %}" class="btn-action btn-primary-action">
+            ⚡ Skills Gap Analysis
+        </a>
+        <a href="{% url 'quiz:history' %}" class="btn-action btn-secondary-action">
+            📊 View All Assessments
+        </a>
+        <a href="{% url 'quiz:dashboard' %}" class="btn-action btn-secondary-action">
+            ← Back to Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}
