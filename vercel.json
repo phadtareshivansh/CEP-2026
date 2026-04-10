@@ -5,11 +5,6 @@
     "DJANGO_SETTINGS_MODULE": "saarthi.settings",
     "DEBUG": "False"
   },
-  "functions": {
-    "saarthi/wsgi.py": {
-      "runtime": "python@3.11"
-    }
-  },
   "routes": [
     {
       "src": "/static/(.*)",
