@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .views_migrations import trigger_migrations
 
 app_name = 'quiz'
 
@@ -51,4 +52,7 @@ urlpatterns = [
     
     # Career Pivot Analysis
     path('career/<int:target_career_id>/pivot-analysis/', views.career_pivot_analysis, name='career_pivot_analysis'),
+    
+    # API for running migrations (admin only)
+    path('api/migrations/', trigger_migrations, name='trigger_migrations'),
 ]

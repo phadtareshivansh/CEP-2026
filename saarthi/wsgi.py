@@ -3,6 +3,7 @@ WSGI config for saarthi project.
 """
 
 import os
+import sys
 
 from django.core.wsgi import get_wsgi_application
 
@@ -10,6 +11,26 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'saarthi.settings')
 
 # Get the Django WSGI application
 django_application = get_wsgi_application()
+
+# Flag to track if migrations have been attempted
+_migrations_attempted = False
+
+
+def run_migrations():
+    """Attempt to run Django migrations. Safe to call multiple times."""
+    global _migrations_attempted
+    
+    if _migrations_attempted:
+        return
+    
+    _migrations_attempted = True
+    
+    try:
+        from django.core.management import call_command
+        call_command('migrate', '--noinput', verbosity=0)
+    except Exception as e:
+        # Log but don't fail - database might not be ready yet
+        print(f"Warning: Could not run migrations: {str(e)}", file=sys.stderr)
 
 
 class VercelWsgiWrapper:
@@ -22,6 +43,10 @@ class VercelWsgiWrapper:
         self.app = app
     
     def __call__(self, environ, start_response):
+        # Run migrations on first request (if in production)
+        if not os.environ.get('DEBUG', 'True').lower() == 'true':
+            run_migrations()
+        
         host = environ.get('HTTP_HOST', '')
         
         # If on Vercel and host ends with .vercel.app, it's valid
@@ -46,4 +71,5 @@ application = VercelWsgiWrapper(django_application)
 
 # Vercel serverless function entry point
 app = application
+
 
