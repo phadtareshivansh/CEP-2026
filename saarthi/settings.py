@@ -130,13 +130,26 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# CORS Configuration for API access
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5000",
     "http://127.0.0.1:5000",
+    "http://localhost:8000",
+    "http://localhost:8080",
 ]
 
-# Backend API URL
-BACKEND_API_URL = 'http://localhost:5000/api'
+# Add Vercel URLs for production
+if not DEBUG:
+    CORS_ALLOWED_ORIGINS.extend([
+        "https://cep-2026-ivory.vercel.app",
+        "https://*.vercel.app",
+    ])
+
+# Backend API URL (environment-aware)
+if DEBUG:
+    BACKEND_API_URL = os.environ.get('BACKEND_API_URL', 'http://localhost:5000/api')
+else:
+    BACKEND_API_URL = os.environ.get('BACKEND_API_URL', 'https://cep-2026-ivory.vercel.app/api')
 
 # =============== ERP-STYLE SECURITY SETTINGS ===============
 
@@ -144,19 +157,29 @@ BACKEND_API_URL = 'http://localhost:5000/api'
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Store in database for security
 SESSION_COOKIE_AGE = 1800  # 30 minutes in seconds
 SESSION_COOKIE_HTTPONLY = True  # Prevent JS access to session cookie
-SESSION_COOKIE_SECURE = False  # Set to True in production with HTTPS
+SESSION_COOKIE_SECURE = not DEBUG  # True in production, False in development
 SESSION_COOKIE_SAMESITE = 'Lax'  # CSRF protection
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Session expires when browser closes
 SESSION_SAVE_EVERY_REQUEST = True  # Update last activity timestamp
 
 # CSRF Protection
 CSRF_COOKIE_HTTPONLY = True
-CSRF_COOKIE_SECURE = False  # Set to True in production with HTTPS
+CSRF_COOKIE_SECURE = not DEBUG  # True in production, False in development
 CSRF_COOKIE_SAMESITE = 'Lax'
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',
     'http://127.0.0.1:8000',
+    'http://localhost:5000',
+    'http://127.0.0.1:5000',
+    'http://localhost:8080',
 ]
+
+# Add Vercel URLs for production
+if not DEBUG:
+    CSRF_TRUSTED_ORIGINS.extend([
+        'https://cep-2026-ivory.vercel.app',
+        'https://*.vercel.app',
+    ])
 
 # Security Headers
 SECURE_CONTENT_SECURITY_POLICY = {
