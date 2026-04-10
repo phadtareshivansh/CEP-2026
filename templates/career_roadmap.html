@@ -1,0 +1,320 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+
+{% block title %}{{ career.title }} Roadmap - Saarthi{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --spacing-xs: 8px;
+        --spacing-sm: 16px;
+        --spacing-md: 24px;
+        --spacing-lg: 32px;
+        --spacing-xl: 40px;
+    }
+    
+    .roadmap-container {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+    
+    .card-custom {
+        padding: var(--spacing-md);
+        border-radius: 16px;
+        border: none;
+        background: white;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+    }
+    
+    .card-custom:hover {
+        box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        transform: translateY(-4px);
+    }
+    
+    .card-header-custom {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: var(--spacing-lg) var(--spacing-md) !important;
+        margin: calc(-1 * var(--spacing-md)) calc(-1 * var(--spacing-md)) var(--spacing-md) calc(-1 * var(--spacing-md));
+        border-radius: 16px 16px 0 0 !important;
+    }
+    
+    .card-header-custom h5 {
+        margin-bottom: 0 !important;
+        color: white;
+    }
+    
+    .header-section {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: var(--spacing-lg);
+        align-items: start;
+        margin-bottom: var(--spacing-xl);
+    }
+    
+    .header-text {
+        color: white;
+    }
+    
+    .header-text h1 {
+        font-size: 2.2rem;
+        margin-bottom: 12px;
+        font-weight: 800;
+    }
+    
+    .header-text p {
+        font-size: 1.1rem;
+        opacity: 0.95;
+        margin-bottom: 0;
+    }
+    
+    .readiness-card {
+        background: white;
+        padding: var(--spacing-lg);
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    
+    .readiness-card h3 {
+        color: #667eea;
+        font-size: 2.5rem;
+        margin-bottom: 8px;
+        font-weight: 800;
+    }
+    
+    .main-layout {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: var(--spacing-lg);
+    }
+    
+    .timeline {
+        position: relative;
+    }
+    
+    .timeline-item {
+        position: relative;
+        padding-left: 80px;
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: 20px;
+        top: 60px;
+        width: 2px;
+        height: 100%;
+        background: #ddd;
+    }
+    
+    .timeline-item:last-child::before {
+        display: none;
+    }
+    
+    .timeline-marker {
+        position: absolute;
+        left: -10px;
+        top: 0;
+        z-index: 1;
+    }
+    
+    .timeline-marker .badge {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: white;
+        border-box: box-sizing;
+    }
+    
+    .timeline-content {
+        background: white;
+        border-left: 4px solid #667eea;
+        padding: var(--spacing-lg);
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    
+    .timeline-content h5 {
+        color: #0f172a;
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .badge-skill {
+        display: inline-block;
+        background: #667eea;
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-right: 8px;
+        margin-bottom: 8px;
+    }
+    
+    .badge-skill-have {
+        background: #10b981;
+    }
+    
+    .badge-skill-need {
+        background: #f59e0b;
+        color: white;
+    }
+    
+    h1, h2, h3, h4, h5 {
+        text-align: left;
+        margin-bottom: var(--spacing-md);
+        color: #0f172a;
+    }
+    
+    .alert {
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        padding: var(--spacing-lg);
+        background: white;
+    }
+    
+    @media (max-width: 968px) {
+        .header-section {
+            grid-template-columns: 1fr;
+        }
+        
+        .main-layout {
+            grid-template-columns: 1fr;
+        }
+        
+        .header-text h1 {
+            font-size: 1.8rem;
+        }
+    }
+</style>
+
+<div class="roadmap-container">
+    <!-- Header Section -->
+    <div class="header-section">
+        <div class="header-text">
+            <h1>{{ career.title }} Roadmap</h1>
+            <p>{{ career.description }}</p>
+        </div>
+        <div class="readiness-card">
+            <h3>{{ readiness_percentage }}%</h3>
+            <p style="color: #64748b; margin-bottom: 12px;">Ready for this career</p>
+            <div class="progress" style="height: 10px; margin-top: 12px;">
+                <div class="progress-bar" style="width: {{ readiness_percentage }}%; background: linear-gradient(90deg, #667eea, #764ba2);"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content: Timeline + Sidebar -->
+    <div class="main-layout">
+        <!-- Roadmap Timeline -->
+        <div>
+            <h3 style="margin-bottom: var(--spacing-lg); color: white;">Career Progression Timeline</h3>
+            
+            {% if roadmap_steps %}
+                <div class="timeline">
+                    {% for step in roadmap_steps %}
+                        <div class="timeline-item">
+                            <div class="timeline-marker">
+                                <span class="badge" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; font-weight: 600; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 50%; border: 3px solid white;">
+                                    {{ step.step }}
+                                </span>
+                            </div>
+                            <div class="timeline-content">
+                                <h5 style="margin-bottom: var(--spacing-md);">{{ step.title }}</h5>
+                                <p style="color: #64748b; margin-bottom: var(--spacing-md);">
+                                    <i class="ri-time-line"></i> 
+                                    <strong>{{ step.duration_months }} months</strong>
+                                </p>
+                                <p style="color: #475569; margin-bottom: var(--spacing-md);">{{ step.description }}</p>
+                                <div>
+                                    <span class="badge-skill" style="background: #06b6d4; color: white;">📚 Learning Phase</span>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert">
+                    <i class="ri-information-line"></i>
+                    <strong>Coming Soon!</strong> Complete roadmap coming soon!
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar: Skills + Career Info -->
+        <div>
+            <!-- Required Skills Card -->
+            <div class="card-custom" style="margin-bottom: var(--spacing-lg);">
+                <div class="card-header-custom">
+                    <h5 class="mb-0">💡 Required Skills</h5>
+                </div>
+                <div style="padding: var(--spacing-lg);">
+                    {% if required_skills %}
+                        <div style="margin-bottom: var(--spacing-lg);">
+                            <h6 style="color: #10b981; display: flex; align-items: center; gap: 6px; margin-bottom: var(--spacing-md);">
+                                <i class="ri-check-circle-line"></i> 
+                                You Have ({{ skills_met|length }})
+                            </h6>
+                            <div>
+                                {% for skill in skills_met %}
+                                    <span class="badge-skill badge-skill-have">{{ skill.name }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        {% if skill_gaps %}
+                            <hr style="margin: var(--spacing-lg) 0; border: none; border-top: 1px solid #e2e8f0;">
+                            <h6 style="color: #f59e0b; display: flex; align-items: center; gap: 6px; margin-bottom: var(--spacing-md);">
+                                <i class="ri-alert-line"></i> 
+                                You Need ({{ skill_gaps|length }})
+                            </h6>
+                            <div>
+                                {% for skill in skill_gaps %}
+                                    <span class="badge-skill badge-skill-need">{{ skill.name }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <p style="color: #64748b; margin: 0;">No specific skills defined yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Career Info Card -->
+            <div class="card-custom">
+                <div class="card-header-custom">
+                    <h5 class="mb-0">📊 Career Outlook</h5>
+                </div>
+                <div style="padding: var(--spacing-lg);">
+                    {% if career.avg_salary %}
+                        <p style="margin-bottom: var(--spacing-lg); color: #0f172a;">
+                            <strong>💰 Average Salary:</strong><br>
+                            <span style="font-size: 1.3rem; color: #667eea; font-weight: 800; margin-top: 6px; display: block;">${{ career.avg_salary|commaseparated }}</span>
+                        </p>
+                    {% endif %}
+                    
+                    {% if career.growth_rate %}
+                        <p style="margin-bottom: var(--spacing-lg); color: #0f172a;">
+                            <strong>📈 Growth Rate:</strong><br>
+                            <span style="font-size: 1.3rem; color: #10b981; font-weight: 800; margin-top: 6px; display: block;">{{ career.growth_rate }}</span>
+                        </p>
+                    {% endif %}
+
+                    <a href="{% url 'quiz:learning_path' career.id %}" class="btn btn-primary" style="width: 100%; margin-top: var(--spacing-lg); padding: 10px;">
+                        <i class="ri-book-line"></i> View Learning Path
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

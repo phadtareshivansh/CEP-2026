@@ -1,52 +1,469 @@
 {% extends 'base.html' %}
 
+{% block title %}Skills Assessment | Saarthi{% endblock %}
+
 {% block content %}
-<div class="container mt-5">
-    <h1>⚡ Skills Assessment</h1>
-    
-    {% if recommended_careers %}
-    <div class="alert alert-info">
-        Based on your latest assessment, you're suited for: <strong>{{ recommended_careers|join:", " }}</strong>
+<style>
+    .skill-gap-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2.5rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        border-top: 4px solid;
+        margin-bottom: 1rem;
+    }
+
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #667eea;
+        margin: 0.5rem 0;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        color: #999;
+        text-transform: uppercase;
+        font-weight: 600;
+        letter-spacing: 1px;
+    }
+
+    .progress-ring {
+        transform: rotate(-90deg);
+        transform-origin: 50% 50%;
+    }
+
+    .progress-ring-circle {
+        stroke-dasharray: 251.2;
+        stroke-dashoffset: 0;
+        transition: stroke-dashoffset 0.35s;
+        transform-origin: 50% 50%;
+    }
+
+    .skill-category-card {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        border-left: 5px solid #667eea;
+    }
+
+    .skill-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        margin-bottom: 0.75rem;
+        border-left: 3px solid;
+    }
+
+    .skill-item.priority-1 { border-left-color: #ef4444; }
+    .skill-item.priority-2 { border-left-color: #f59e0b; }
+    .skill-item.priority-3 { border-left-color: #eab308; }
+    .skill-item.priority-4 { border-left-color: #10b981; }
+
+    .proficiency-badge {
+        display: inline-block;
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: white;
+    }
+
+    .proficiency-novice { background-color: #ef4444; }
+    .proficiency-beginner { background-color: #f97316; }
+    .proficiency-intermediate { background-color: #eab308; }
+    .proficiency-advanced { background-color: #3b82f6; }
+    .proficiency-expert { background-color: #8b5cf6; }
+    .proficiency-none { background-color: #d1d5db; }
+
+    .gap-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.3rem 0.6rem;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .gap-critical { background: #fee2e2; color: #991b1b; }
+    .gap-high { background: #fef3c7; color: #92400e; }
+    .gap-medium { background: #dbeafe; color: #1e40af; }
+    .gap-low { background: #dcfce7; color: #166534; }
+    .gap-none { background: #f0fdf4; color: #15803d; }
+
+    .learning-path-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+    }
+
+    .milestone {
+        display: flex;
+        gap: 1rem;
+        padding: 1rem;
+        background: white;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        border-left: 4px solid #667eea;
+        color: #333;
+    }
+
+    .milestone-number {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: #667eea;
+        color: white;
+        font-weight: 800;
+        font-size: 1.3rem;
+        flex-shrink: 0;
+    }
+
+    .resource-link {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        background: #e0e7ff;
+        border-radius: 6px;
+        color: #667eea;
+        text-decoration: none;
+        font-size: 0.85rem;
+        margin: 0.25rem;
+        transition: all 0.2s;
+    }
+
+    .resource-link:hover {
+        background: #667eea;
+        color: white;
+    }
+
+    .benchmark-bar {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        margin: 1rem 0;
+    }
+
+    .benchmark-track {
+        flex: 1;
+        height: 8px;
+        background: #e5e7eb;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .benchmark-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        border-radius: 4px;
+    }
+
+    .benchmark-target {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #666;
+        white-space: nowrap;
+    }
+
+    .career-skill-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    .career-skill-box {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 10px;
+        border: 2px solid #e5e7eb;
+        transition: all 0.3s;
+    }
+
+    .career-skill-box:hover {
+        border-color: #667eea;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+    }
+
+    .career-name {
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+    }
+
+    .mastery-circle {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 1.5rem;
+        color: white;
+        margin: 1rem auto;
+    }
+
+    .mastery-expert { background: linear-gradient(135deg, #8b5cf6 0%, #667eea 100%); }
+    .mastery-advanced { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
+    .mastery-intermediate { background: linear-gradient(135deg, #eab308 0%, #facc15 100%); }
+    .mastery-beginner { background: linear-gradient(135deg, #f97316 0%, #fb923c 100%); }
+    .mastery-novice { background: linear-gradient(135deg, #ef4444 0%, #f87171 100%); }
+</style>
+
+<div class="container mt-5 mb-5">
+    <!-- Hero Section -->
+    <div class="skill-gap-hero">
+        <h1>🎯 Advanced Skills Gap Analysis</h1>
+        <p style="opacity: 0.9; font-size: 1.1rem; margin-top: 0.5rem;">
+            Detailed breakdown of your strengths and development areas for your career path
+        </p>
+    </div>
+
+    <!-- Overall Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="stat-card" style="border-top-color: #667eea;">
+                <div class="stat-label">Current Proficiency</div>
+                <div class="stat-value">{{ gap_analysis.overall_proficiency|floatformat:0 }}%</div>
+                <small style="color: #999;">of required skills</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card" style="border-top-color: #ef4444;">
+                <div class="stat-label">Skill Gaps</div>
+                <div class="stat-value">{{ gap_analysis.gap_count }}</div>
+                <small style="color: #999;">areas to develop</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card" style="border-top-color: #10b981;">
+                <div class="stat-label">Est. Learning Time</div>
+                <div class="stat-value">{{ gap_analysis.learning_weeks }}w</div>
+                <small style="color: #999;">{{ gap_analysis.learning_estimate_hours }} hours total</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card" style="border-top-color: #3b82f6;">
+                <div class="stat-label">Industry Benchmark</div>
+                <div class="stat-value">{{ gap_analysis.industry_benchmark|floatformat:0 }}%</div>
+                <small style="color: #999;">target proficiency</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Proficiency Benchmark -->
+    {% if gap_analysis.overall_proficiency %}
+    <div style="background: white; padding: 2rem; border-radius: 10px; margin-bottom: 2rem; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);">
+        <h3 style="color: #333; margin-bottom: 1.5rem;">📊 Overall Proficiency Vs Industry Standard</h3>
+        <div class="benchmark-bar">
+            <div class="benchmark-track">
+                <div class="benchmark-fill" style="width: {{ gap_analysis.overall_proficiency }}%;"></div>
+            </div>
+            <span style="font-weight: 700; color: #667eea; min-width: 50px;">{{ gap_analysis.overall_proficiency|floatformat:0 }}%</span>
+        </div>
+        <p style="color: #666; font-size: 0.95rem; margin-top: 1rem;">
+            You're currently at <strong>{{ gap_analysis.overall_proficiency|floatformat:0 }}%</strong> proficiency.
+            Industry recommendation is <strong>{{ gap_analysis.industry_benchmark|floatformat:0 }}%</strong>.
+            {% if gap_analysis.overall_proficiency < gap_analysis.industry_benchmark %}
+            <span style="color: #ef4444; font-weight: 600;">Gap to close</span>
+            {% else %}
+            <span style="color: #10b981; font-weight: 600;">✓ You exceed industry standards!</span>
+            {% endif %}
+        </p>
     </div>
     {% endif %}
+
+    <!-- Career-Specific Skills Analysis -->
+    <h2 style="color: #333; margin: 2.5rem 0 1.5rem;">💼 Career-Specific Skills Analysis</h2>
     
-    <div class="row">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
-                    <h5>Your Skills</h5>
-                </div>
-                <div class="card-body">
-                    {% for skill in user_skills %}
-                    <div class="mb-3 pb-3 border-bottom">
-                        <h6>{{ skill.skill.name }}</h6>
-                        <p class="text-muted">Proficiency: <strong>{{ skill.proficiency_level|title }}</strong></p>
-                        <p class="text-muted">Experience: {{ skill.years_of_experience }} years</p>
+    {% for career in recommended_careers %}
+    <div class="career-skill-box" style="margin-bottom: 2rem; padding: 2rem; border-left: 5px solid #667eea;">
+        <div class="career-name">{{ career.title }}</div>
+        <p style="color: #666; font-size: 0.95rem; margin-bottom: 1rem;">
+            Categories: <strong>{{ career.primary_category }}</strong>
+        </p>
+
+        {% if gap_analysis.skill_categories %}
+            {% for category, cat_data in gap_analysis.skill_categories.items %}
+                {% if cat_data.total > 0 %}
+                <div style="margin-bottom: 2rem;">
+                    <h5 style="color: #333; margin-bottom: 1rem;">{{ category }}</h5>
+                    
+                    <!-- Category Progress -->
+                    <div style="background: #f0f4ff; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.85rem; font-weight: 600; color: #667eea;">Progress</span>
+                            <span style="font-size: 0.85rem; font-weight: 600; color: #667eea;">{{ cat_data.mastered }}/{{ cat_data.total }}</span>
+                        </div>
+                        <div style="height: 6px; background: #e0e7ff; border-radius: 3px; overflow: hidden;">
+                            <div style="height: 100%; width: {% widthratio cat_data.mastered cat_data.total 100 %}%; background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);"></div>
+                        </div>
                     </div>
-                    {% empty %}
-                    <p class="text-muted">No skills added yet.</p>
+
+                    <!-- Skills in This Category -->
+                    {% for skill in cat_data.gap_items %}
+                    <div class="skill-item priority-{{ skill.priority_score|floatformat:0|divisibleby:"2"|yesno:"1,2" }}">
+                        <div>
+                            <div style="font-weight: 600; color: #1f2937; margin-bottom: 0.25rem;">{{ skill.skill.name }}</div>
+                            <div style="font-size: 0.85rem; color: #666;">
+                                Needed: <span class="proficiency-badge proficiency-{{ skill.required_level }}">{{ skill.required_level|title }}</span>
+                                {% if skill.current_level != 'none' %}
+                                    Current: <span class="proficiency-badge proficiency-{{ skill.current_level }}">{{ skill.current_level|title }}</span>
+                                {% else %}
+                                    <span style="color: #ef4444; font-weight: 600;">Not started</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div>
+                            {% if skill.gap_score >= 3 %}
+                            <span class="gap-indicator gap-critical">🔴 Critical {{ skill.gap_score }}</span>
+                            {% elif skill.gap_score == 2 %}
+                            <span class="gap-indicator gap-high">🟠 High {{ skill.gap_score }}</span>
+                            {% elif skill.gap_score == 1 %}
+                            <span class="gap-indicator gap-medium">🔵 Medium 1</span>
+                            {% else %}
+                            <span class="gap-indicator gap-none">✓ Done</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <!-- Mastered Skills in This Category -->
+                    {% for skill in gap_analysis.mastered_skills %}
+                        {% if skill.category == category %}
+                        <div class="skill-item priority-4" style="border-left-color: #10b981;">
+                            <div>
+                                <div style="font-weight: 600; color: #1f2937; margin-bottom: 0.25rem;">
+                                    ✓ {{ skill.skill.name }}
+                                </div>
+                                <div style="font-size: 0.85rem; color: #666;">
+                                    Mastered: <span class="proficiency-badge proficiency-{{ skill.current_level }}">{{ skill.current_level|title }}</span>
+                                    • {{ skill.years_of_exp }} years exp
+                                </div>
+                            </div>
+                            <span class="gap-indicator gap-none">✅ Mastered</span>
+                        </div>
+                        {% endif %}
                     {% endfor %}
                 </div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    {% endfor %}
+
+    <!-- Priority Learning Path -->
+    {% if gap_analysis.priority_skills %}
+    <div class="learning-path-card">
+        <h2 style="margin-bottom: 1.5rem;">🚀 Recommended Learning Path</h2>
+        <p style="opacity: 0.95; margin-bottom: 2rem;">Focus on these skills in order of priority and industry demand</p>
+
+        {% for skill in gap_analysis.priority_skills %}
+        <div class="milestone">
+            <div class="milestone-number">{{ forloop.counter }}</div>
+            <div style="flex: 1;">
+                <h5 style="margin: 0 0 0.5rem 0;">{{ skill.skill.name }}</h5>
+                <p style="margin: 0.5rem 0; font-size: 0.9rem;">
+                    <strong>Current:</strong> {{ skill.current_level|title }}
+                    <strong>→ Target:</strong> {{ skill.required_level|title }}
+                </p>
+                <p style="margin: 0.5rem 0; font-size: 0.85rem; opacity: 0.9;">
+                    ⏱️ Est. {{ skill.learning_hours }} hours
+                    • 📊 Industry Demand: {{ skill.industry_demand|floatformat:1 }}/10
+                    • Category: {{ skill.category }}
+                </p>
+                {% if skill.resources %}
+                <p style="margin-top: 0.75rem; margin-bottom: 0;">
+                    {% for resource in skill.resources %}
+                    <a href="{{ resource }}" target="_blank" class="resource-link">📚 Resource {{ forloop.counter }}</a>
+                    {% endfor %}
+                </p>
+                {% endif %}
             </div>
         </div>
-        
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-header bg-success text-white">
-                    <h5>Skills Gap</h5>
-                </div>
-                <div class="card-body">
-                    <p class="text-muted">Recommended skills to develop:</p>
-                    <ul class="list-unstyled">
-                        {% for skill in missing_skills %}
-                        <li>✓ {{ skill.name }}</li>
-                        {% empty %}
-                        <li class="text-success">You have all required skills!</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
+        {% endfor %}
+
+        <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(255, 255, 255, 0.1); border-radius: 8px;">
+            <p style="margin: 0; font-size: 0.95rem;">
+                💡 <strong>Total estimated time:</strong> {{ gap_analysis.learning_weeks }} weeks ({{ gap_analysis.learning_estimate_hours }} hours) at ~10 hours/week
+            </p>
         </div>
     </div>
+    {% endif %}
+
+    <!-- Your Current Skills -->
+    <h2 style="color: #333; margin: 2.5rem 0 1.5rem;">⭐ Your Current Skills</h2>
+    <div class="row">
+        {% for skill in user_skills %}
+        <div class="col-md-6 mb-3">
+            <div class="career-skill-box">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                    <div>
+                        <div style="font-weight: 700; color: #1f2937;">{{ skill.skill.name }}</div>
+                        <small style="color: #999;">{{ skill.skill.category }}</small>
+                    </div>
+                    <span class="proficiency-badge proficiency-{{ skill.proficiency_level }}">{{ skill.proficiency_level|title }}</span>
+                </div>
+                <div class="mastery-circle mastery-{{ skill.proficiency_level }}">
+                    {% if skill.proficiency_level == 'expert' %}E{% elif skill.proficiency_level == 'advanced' %}A{% elif skill.proficiency_level == 'intermediate' %}I{% elif skill.proficiency_level == 'beginner' %}B{% else %}N{% endif %}
+                </div>
+                <p style="text-align: center; color: #666; font-size: 0.9rem; margin: 1rem 0 0;">
+                    <strong>{{ skill.years_of_experience }}</strong> years of experience
+                </p>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div style="background: #f0fdf4; border: 2px dashed #10b981; border-radius: 10px; padding: 2rem; text-align: center;">
+                <p style="color: #166534; font-weight: 600; margin: 0;">
+                    No skills added yet. Start by adding your current skills to get personalized gap analysis!
+                </p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div style="text-align: center; margin: 3rem 0 2rem;">
+        <a href="{% url 'quiz:add_skill' %}" class="btn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 0.75rem 2rem; border-radius: 8px; text-decoration: none; font-weight: 600;">
+            ➕ Add New Skill
+        </a>
+    </div>
+</div>
+
+<script>
+    // Animate the proficiency bars on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const bars = document.querySelectorAll('.benchmark-fill');
+        bars.forEach(bar => {
+            const width = bar.style.width;
+            bar.style.width = '0';
+            setTimeout(() => {
+                bar.style.transition = 'width 0.8s ease';
+                bar.style.width = width;
+            }, 100);
+        });
+    });
+</script>
 </div>
 {% endblock %}

@@ -5,11 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Saarthi - Find Your Pathway</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+        }
+        
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
         }
         
         body {
@@ -18,424 +25,350 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             overflow-x: hidden;
         }
-        
-        /* HERO SECTION */
-        .hero-section {
-            min-height: 100vh;
+
+        /* NAVBAR */
+        .navbar-custom {
+            background: rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px 30px;
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: white !important;
+        }
+
+        .navbar-menu {
+            display: flex;
+            gap: 30px;
+        }
+
+        .navbar-menu a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .navbar-menu a:hover {
+            color: white;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* MAIN CONTAINER */
+        .main-content {
+            min-height: calc(100vh - 70px);
+            padding: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
-            position: relative;
         }
         
-        .hero-content {
+        .content-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 60px;
-            align-items: center;
+            gap: 50px;
             max-width: 1200px;
             width: 100%;
+            align-items: center;
         }
-        
-        .hero-text {
-            color: white;
-            z-index: 2;
-        }
-        
-        .hero-text h1 {
+
+        /* LEFT SIDE */
+        .left-section h1 {
             font-size: 3.5rem;
             font-weight: 800;
+            color: white;
             margin-bottom: 20px;
             line-height: 1.2;
         }
-        
-        .hero-text .tagline {
-            font-size: 1.3rem;
-            opacity: 0.95;
-            margin-bottom: 30px;
-            font-weight: 300;
+
+        .tagline {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 25px;
+            line-height: 1.6;
         }
-        
-        .features-list {
+
+        .features {
             list-style: none;
-            margin-bottom: 40px;
+            margin: 30px 0;
         }
-        
-        .features-list li {
-            font-size: 1.1rem;
-            margin-bottom: 15px;
+
+        .features li {
+            font-size: 1.05rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
-            opacity: 0.9;
         }
-        
-        .features-list li:before {
+
+        .features li:before {
             content: "✓";
             display: inline-block;
-            width: 30px;
-            height: 30px;
+            width: 28px;
+            height: 28px;
             background: rgba(255, 255, 255, 0.2);
             border-radius: 50%;
             text-align: center;
-            line-height: 30px;
-            margin-right: 15px;
+            line-height: 28px;
+            margin-right: 12px;
             font-weight: bold;
         }
-        
-        /* LOGIN CARD */
-        .login-card {
-            background: white;
-            border-radius: 15px;
-            padding: 50px 40px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            position: relative;
-            z-index: 2;
-        }
-        
-        .login-card h2 {
-            color: #333;
-            font-size: 2rem;
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
-        
-        .login-card .subtitle {
-            color: #999;
-            font-size: 0.95rem;
-            margin-bottom: 30px;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
-            font-weight: 600;
-            color: #555;
-            margin-bottom: 8px;
-            font-size: 0.95rem;
-        }
-        
-        .form-group input {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: all 0.3s;
-            background: #f8f9fa;
-        }
-        
-        .form-group input:focus {
-            outline: none;
-            border-color: #667eea;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-        
-        .checkbox-group {
+
+        .cta-buttons {
             display: flex;
-            align-items: center;
-            margin-bottom: 25px;
+            gap: 15px;
+            margin-top: 40px;
         }
-        
-        .checkbox-group input {
-            width: auto;
-            margin-right: 10px;
+
+        .btn-primary-custom {
+            background: white;
+            color: #667eea;
+            padding: 12px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
             cursor: pointer;
         }
-        
-        .checkbox-group label {
-            margin: 0;
-            font-weight: 400;
-            font-size: 0.95rem;
-            cursor: pointer;
-            color: #666;
+
+        .btn-primary-custom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
         }
-        
-        .btn-login {
+
+        .btn-secondary-custom {
+            background: transparent;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            border: 2px solid white;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .btn-secondary-custom:hover {
+            background: white;
+            color: #667eea;
+        }
+
+        /* RIGHT SIDE - CARDS */
+        .cards-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card-main {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .card-stat {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            border: none;
-            padding: 14px;
-            border-radius: 8px;
-            font-size: 1.05rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            width: 100%;
-            margin-bottom: 20px;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 15px;
         }
-        
-        .btn-login:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
-            color: white;
-            text-decoration: none;
+
+        .card-stat h3 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin: 0;
         }
-        
-        .signup-link {
-            text-align: center;
+
+        .card-stat p {
             font-size: 0.95rem;
-            color: #666;
+            opacity: 0.95;
+            margin: 5px 0 0 0;
         }
-        
-        .signup-link a {
-            color: #667eea;
-            font-weight: 600;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-        
-        .signup-link a:hover {
-            color: #764ba2;
-            text-decoration: underline;
-        }
-        
-        .message {
-            padding: 12px 15px;
-            border-radius: 8px;
+
+        .card-welcome {
+            background: linear-gradient(135deg, #00bcd4 0%, #0097a7 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 25px;
             margin-bottom: 20px;
-            font-size: 0.9rem;
-            display: none;
-            animation: slideDown 0.3s ease;
         }
-        
-        .message.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-            display: block;
+
+        .card-welcome h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0 0 10px 0;
         }
-        
-        .message.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-            display: block;
+
+        .card-welcome p {
+            font-size: 1.1rem;
+            margin: 0;
+            opacity: 0.95;
         }
-        
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+
+        /* FEATURE CARDS */
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
         }
-        
+
+        .feature-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .feature-card h5 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .feature-card p {
+            font-size: 0.85rem;
+            color: #999;
+            margin: 0;
+        }
+
+        /* RESPONSIVE */
         @media (max-width: 968px) {
-            .hero-content {
+            .content-grid {
                 grid-template-columns: 1fr;
-                gap: 40px;
+                gap: 30px;
             }
-            
-            .hero-text h1 {
+
+            .left-section h1 {
                 font-size: 2.5rem;
             }
-            
-            .login-card {
-                padding: 40px 30px;
+
+            .cta-buttons {
+                flex-direction: column;
             }
-            
-            .features-list {
-                margin-bottom: 30px;
+
+            .features-grid {
+                grid-template-columns: 1fr;
             }
-        }
-        
-        /* Floating elements animation */
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-        }
-        
-        .floating {
-            animation: float 6s ease-in-out infinite;
         }
     </style>
 </head>
 <body>
-    <div class="hero-section">
-        <div class="hero-content">
-            <!-- LEFT SIDE: APP INFO -->
-            <div class="hero-text">
-                <h1>🎯 Saarthi</h1>
-                <p class="tagline">Find Your Pathway to Your Perfect Career</p>
-                
-                <p style="font-size: 1.05rem; line-height: 1.8; margin-bottom: 25px;">
-                    Saarthi is your intelligent career guidance companion. Discover careers aligned with your interests, 
-                    skills, and values through our comprehensive assessment system.
-                </p>
-                
-                <ul class="features-list">
-                    <li>🧠 Intelligent Career Assessment</li>
-                    <li>📊 Personalized Career Recommendations</li>
-                    <li>💡 Skill Gap Analysis & Recommendations</li>
-                    <li>🚀 In-Depth Career Insights</li>
+    <!-- NAVBAR -->
+    <nav class="navbar-custom d-flex justify-content-between align-items-center">
+        <div class="navbar-brand">🎯 Saarthi</div>
+        <div class="navbar-menu d-flex">
+            <a href="{% url 'quiz:start_assessment' %}">Quiz</a>
+            <a href="{% url 'quiz:forum' %}">Forum</a>
+            <a href="{% url 'quiz:skills_assessment' %}">Skills</a>
+        </div>
+        <div class="user-profile">
+            {% if user.is_authenticated %}
+                <span>{{ user.first_name|default:user.username }}</span>
+                <a href="{% url 'quiz:logout' %}" style="margin-left: 20px; color: rgba(255,255,255,0.9);">⭐</a>
+            {% else %}
+                <a href="{% url 'quiz:login' %}" style="color: rgba(255,255,255,0.9);">Sign In</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <div class="content-grid">
+            <!-- LEFT SIDE -->
+            <div class="left-section">
+                <h1>🎯 Find Your Pathway</h1>
+                <p class="tagline">Confused about your career direction? Let Saarthi guide you to a career that truly matches your interests and strengths.</p>
+
+                <ul class="features">
+                    <li>🧠 Discover your RIASEC type through our comprehensive assessment</li>
+                    <li>📊 Get personalized learning paths and skill recommendations</li>
+                    <li>🗺️ Visualize career progression with detailed roadmaps</li>
+                    <li>🤖 AI-powered career pivot analysis</li>
+                    <li>📈 Compare careers and track your progress</li>
                 </ul>
-                
-                <p style="font-size: 0.95rem; opacity: 0.8;">
-                    Start your career exploration journey today and unlock your true potential.
-                </p>
+
+                {% if user.is_authenticated %}
+                    <div class="cta-buttons">
+                        <a href="{% url 'quiz:personalized_dashboard' %}" class="btn-primary-custom">📊 View Dashboard</a>
+                        <a href="{% url 'quiz:start_assessment' %}" class="btn-secondary-custom">📝 Take Assessment</a>
+                    </div>
+                {% else %}
+                    <div class="cta-buttons">
+                        <a href="{% url 'quiz:start_assessment' %}" class="btn-primary-custom">🚀 Start Assessment</a>
+                        <a href="{% url 'quiz:signup' %}" class="btn-secondary-custom">Create Account</a>
+                    </div>
+                {% endif %}
             </div>
-            
-            <!-- RIGHT SIDE: LOGIN FORM -->
-            <div class="login-card floating">
-                <h2>Welcome Back</h2>
-                <p class="subtitle">Sign in to continue your career journey</p>
-                
-                <form id="loginForm">
-                    {% csrf_token %}
-                    <div id="loginMessage" class="message"></div>
-                    
-                    <div class="form-group">
-                        <label for="loginUsername">📧 Username</label>
-                        <input type="text" id="loginUsername" name="username" required placeholder="Enter your username">
+
+            <!-- RIGHT SIDE - INFO CARDS -->
+            <div class="cards-section">
+                <div class="card-stat">
+                    <h3>98%</h3>
+                    <p>Career Accuracy Rate</p>
+                </div>
+
+                {% if user.is_authenticated %}
+                    <div class="card-welcome">
+                        <h2>👋 Welcome!</h2>
+                        <p>{{ user.first_name|default:user.username }}</p>
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="loginPassword">🔐 Password</label>
-                        <input type="password" id="loginPassword" name="password" required placeholder="Enter your password">
+                {% else %}
+                    <div class="card-welcome">
+                        <h2>👋 Welcome to Saarthi!</h2>
+                        <p>Your Career Guidance Companion</p>
                     </div>
-                    
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="rememberMe" name="remember_me">
-                        <label for="rememberMe">Remember me</label>
+                {% endif %}
+
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-card-icon">🧠</div>
+                        <h5>Smart Matching</h5>
+                        <p>AI-powered recommendations</p>
                     </div>
-                    
-                    <button type="submit" class="btn-login">Sign In</button>
-                    
-                    <div class="signup-link">
-                        Don't have an account? <a href="javascript:void(0)" onclick="showSignup()">Create one here</a>
+                    <div class="feature-card">
+                        <div class="feature-card-icon">⚡</div>
+                        <h5>Fast & Free</h5>
+                        <p>Complete in 15 minutes</p>
                     </div>
-                </form>
+                    <div class="feature-card">
+                        <div class="feature-card-icon">📈</div>
+                        <h5>Track Progress</h5>
+                        <p>Monitor your journey</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-icon">👥</div>
+                        <h5>Community</h5>
+                        <p>Connect with peers</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    
-    <!-- SIGNUP MODAL -->
-    <div id="signupModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center;">
-        <div style="background: white; border-radius: 15px; padding: 40px; max-width: 400px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h2 style="margin: 0; color: #333; font-size: 1.8rem;">Create Account</h2>
-                <button onclick="hideSignup()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #999;">✕</button>
-            </div>
-            
-            <form id="signupForm">
-                {% csrf_token %}
-                <div id="signupMessage" class="message"></div>
-                
-                <div class="form-group">
-                    <label for="signupUsername">Username</label>
-                    <input type="text" id="signupUsername" name="username" required placeholder="Choose a username">
-                </div>
-                
-                <div class="form-group">
-                    <label for="signupEmail">Email</label>
-                    <input type="email" id="signupEmail" name="email" required placeholder="your@email.com">
-                </div>
-                
-                <div class="form-group">
-                    <label for="signupPassword">Password</label>
-                    <input type="password" id="signupPassword" name="password" required placeholder="Create a strong password (min 6 chars)">
-                </div>
-                
-                <button type="submit" class="btn-login">Create Account</button>
-                
-                <div class="signup-link" style="margin-top: 15px;">
-                    Already have an account? <a href="javascript:void(0)" onclick="hideSignup()">Sign in instead</a>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <script>
-        // MODAL FUNCTIONS
-        function showSignup() {
-            document.getElementById('signupModal').style.display = 'flex';
-        }
-        
-        function hideSignup() {
-            document.getElementById('signupModal').style.display = 'none';
-        }
-        
-        // Close modal when clicking outside
-        document.getElementById('signupModal').addEventListener('click', function(e) {
-            if (e.target === this) hideSignup();
-        });
-        
-        // LOGIN FORM HANDLER
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const username = document.getElementById('loginUsername').value;
-            const password = document.getElementById('loginPassword').value;
-            const messageDiv = document.getElementById('loginMessage');
-
-            try {
-                const response = await fetch('{% url "quiz:login" %}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                    },
-                    body: JSON.stringify({ username, password })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    messageDiv.className = 'message success';
-                    messageDiv.textContent = '✓ Logged in! Redirecting...';
-                    setTimeout(() => window.location.href = '{% url "quiz:dashboard" %}', 1500);
-                } else {
-                    messageDiv.className = 'message error';
-                    messageDiv.textContent = '✗ ' + data.message;
-                }
-            } catch (error) {
-                messageDiv.className = 'message error';
-                messageDiv.textContent = '✗ An error occurred. Please try again.';
-                console.error('Error:', error);
-            }
-        });
-
-        // SIGNUP FORM HANDLER
-        document.getElementById('signupForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const username = document.getElementById('signupUsername').value;
-            const email = document.getElementById('signupEmail').value;
-            const password = document.getElementById('signupPassword').value;
-            const messageDiv = document.getElementById('signupMessage');
-
-            try {
-                const response = await fetch('{% url "quiz:signup" %}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                    },
-                    body: JSON.stringify({ username, email, password })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    messageDiv.className = 'message success';
-                    messageDiv.textContent = '✓ Account created! Logging you in...';
-                    setTimeout(() => window.location.href = '{% url "quiz:dashboard" %}', 1500);
-                } else {
-                    messageDiv.className = 'message error';
-                    messageDiv.textContent = '✗ ' + data.message;
-                }
-            } catch (error) {
-                messageDiv.className = 'message error';
-                messageDiv.textContent = '✗ An error occurred. Please try again.';
-                console.error('Error:', error);
-            }
-        });
-    </script>
 </body>
 </html>

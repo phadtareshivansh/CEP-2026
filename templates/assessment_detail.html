@@ -63,12 +63,18 @@
 
     .score-card {
         padding: 1.5rem;
-        background: #f8f9fa;
         border-radius: 8px;
         border-left: 4px solid;
         text-align: center;
         color: white;
     }
+
+    .score-card.badge-Realistic { background-color: #ef4444; }
+    .score-card.badge-Investigative { background-color: #3b82f6; }
+    .score-card.badge-Artistic { background-color: #f59e0b; }
+    .score-card.badge-Social { background-color: #10b981; }
+    .score-card.badge-Enterprising { background-color: #ec4899; }
+    .score-card.badge-Conventional { background-color: #8b5cf6; }
 
     .score-card h4 {
         margin: 0 0 1rem 0;
@@ -107,7 +113,7 @@
 
     .detail-item-value {
         font-size: 1.2rem;
-        color: #333;
+        color: #1a1a1a;
         font-weight: 600;
     }
 
@@ -121,7 +127,7 @@
 
     .career-item h4 {
         margin: 0 0 0.5rem 0;
-        color: #333;
+        color: #1a1a1a;
     }
 
     .career-item p {
@@ -179,27 +185,6 @@
         color: white;
     }
 
-    .dark-mode .section-card {
-        background: #2a2a2a;
-        color: #fff;
-    }
-
-    .dark-mode .section-card h3 {
-        color: #fff;
-        border-color: #444;
-    }
-
-    .dark-mode .detail-item,
-    .dark-mode .career-item {
-        background: #333;
-        color: #fff;
-    }
-
-    .dark-mode .detail-item-value,
-    .dark-mode .career-item h4 {
-        color: #fff;
-    }
-
     @media (max-width: 768px) {
         .action-buttons {
             flex-direction: column;
@@ -255,7 +240,7 @@
             {% for category, score in sorted_scores %}
             <div class="score-card badge-{{ category }}">
                 <h4>{{ category }}</h4>
-                <div class="score-value">{{ score }}/15</div>
+                <div class="score-value">{{ score|floatformat:1 }}/15</div>
                 <small style="color: rgba(255,255,255,0.9);">Aptitude Score</small>
             </div>
             {% endfor %}
@@ -277,29 +262,49 @@
             Based on your RIASEC profile, these careers align with your interests and strengths:
         </p>
 
-        {% for idx, career in career_pathway|slice:":6" %}
-        <div class="career-item">
-            <div style="display: flex; justify-content: space-between; align-items: start;">
-                <div style="flex: 1;">
-                    <h4 style="margin-top: 0;">{{ idx|add:1 }}. {{ career.title }}</h4>
-                    <p>{{ career.description }}</p>
-                    {% if career.skills %}
-                    <div>
-                        <strong style="color: #667eea;">Key Skills:</strong>
-                        <div style="margin-top: 0.5rem;">
-                            {% if career.skills|length > 0 %}
-                                {% for skill in career.skills %}
-                                <span class="skills-tag">{{ skill }}</span>
-                                {% endfor %}
-                            {% endif %}
-                        </div>
-                    </div>
-                    {% endif %}
+        <!-- Primary Pathway -->
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+            <h4 style="margin: 0 0 0.5rem 0; font-size: 1.3rem;">1. Primary</h4>
+            <p style="margin: 0; font-size: 1.1rem; font-weight: 600;">{{ career_pathway.primary }}</p>
+        </div>
+
+        <!-- Recommended Roles -->
+        {% if career_pathway.roles %}
+        <div style="margin-bottom: 2rem;">
+            <h4 style="color: #333; margin-bottom: 1rem;">2. Roles</h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                {% for role in career_pathway.roles %}
+                <div style="background: #f0f4ff; padding: 1rem; border-radius: 8px; border-left: 4px solid #667eea;">
+                    <p style="margin: 0; color: #333; font-weight: 600;">{{ role }}</p>
                 </div>
-                <span style="font-size: 2rem; opacity: 0.3; margin-left: 1rem;">💼</span>
+                {% endfor %}
             </div>
         </div>
-        {% endfor %}
+        {% endif %}
+
+        <!-- Skills to Develop -->
+        {% if career_pathway.skills %}
+        <div style="margin-bottom: 2rem;">
+            <h4 style="color: #333; margin-bottom: 1rem;">3. Skills</h4>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
+                {% for skill in career_pathway.skills %}
+                <span class="skills-tag" style="background: #667eea; color: white; border: none;">{{ skill }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Next Steps -->
+        {% if career_pathway.next_steps %}
+        <div>
+            <h4 style="color: #333; margin-bottom: 1rem;">4. Next_Steps</h4>
+            <ol style="padding-left: 1.5rem; color: #555; line-height: 1.8;">
+                {% for step in career_pathway.next_steps %}
+                <li style="margin-bottom: 0.5rem;">{{ step }}</li>
+                {% endfor %}
+            </ol>
+        </div>
+        {% endif %}
     </div>
     {% endif %}
 

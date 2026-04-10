@@ -327,3 +327,76 @@ class LoginAttempt(models.Model):
         status = "SUCCESS" if self.success else "FAILED"
         return f"{self.username} - {status} - {self.timestamp}"
 
+
+class UserCareerGoal(models.Model):
+    """Track user's target career goal"""
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='career_goal')
+    target_career = models.ForeignKey(Career, on_delete=models.CASCADE, related_name='goal_users')
+    target_proficiency_level = models.CharField(
+        max_length=20,
+        choices=[('novice', 'Novice'), ('beginner', 'Beginner'), ('intermediate', 'Intermediate'), 
+                 ('advanced', 'Advanced'), ('expert', 'Expert')],
+        default='intermediate'
+    )
+    target_timeline_months = models.IntegerField(default=12)
+    notes = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f"{self.user.username} → {self.target_career.title}"
+
+
+class LearningGoal(models.Model):
+    """Track learning goals for specific skills"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='learning_goals')
+    skill = models.ForeignKey(Skill, on_delete=models.CASCADE)
+    target_proficiency = models.CharField(
+        max_length=20,
+        choices=[('novice', 'Novice'), ('beginner', 'Beginner'), ('intermediate', 'Intermediate'), 
+                 ('advanced', 'Advanced'), ('expert', 'Expert')],
+        default='intermediate'
+    )
+    estimated_hours = models.IntegerField(default=40)
+    deadline = models.DateField(null=True, blank=True)
+    completed = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ('user', 'skill')
+    
+    def __str__(self):
+        return f"{self.user.username} - {self.skill.name}"
+
+
+class LearningProgress(models.Model):
+    """Track user's progress on learning goals"""
+    learning_goal = models.ForeignKey(LearningGoal, on_delete=models.CASCADE, related_name='progress_logs')
+    hours_completed = models.FloatField(default=0)
+    courses_completed = models.JSONField(default=list)  # List of course URLs/names
+    milestone_reached = models.CharField(max_length=255, blank=True)
+    completed_percentage = models.FloatField(default=0)  # 0-100
+    logged_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-logged_at']
+    
+    def __str__(self):
+        return f"{self.learning_goal.skill.name} - {self.hours_completed}h completed"
+
+
+class CareerPivotAnalysis(models.Model):
+    """Store AI analysis of career pivot feasibility"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='pivot_analyses')
+    current_career_type = models.CharField(max_length=255)  # What user is now
+    target_career = models.ForeignKey(Career, on_delete=models.CASCADE)
+    analysis = models.JSONField()  # {readiness: 0-100, skills_gap: [...], retraining_months: X, salary_change: Y, ...}
+    ai_generated = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"{self.user.username}: {self.current_career_type} → {self.target_career.title}"
+

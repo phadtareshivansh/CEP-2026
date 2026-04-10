@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+
+{% block title %}Learning Path - {{ career.title }} - Saarthi{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Header -->
+    <div class="row mb-5">
+        <div class="col-md-8">
+            <h1 class="display-4">Learning Path</h1>
+            <h2 class="text-primary">{{ career.title }}</h2>
+            <p class="text-muted fs-5">Personalized course recommendations to reach your goal</p>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white border-0">
+                <div class="card-body">
+                    <h3>{{ goal.target_timeline_months }} months</h3>
+                    <p class="mb-0">Estimated time to reach goal</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Progress Overview -->
+        <div class="col-md-12 mb-5">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Overall Progress</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3">
+                            <h4 class="text-primary">{{ total_goals }}</h4>
+                            <p class="text-muted">Learning Goals</p>
+                        </div>
+                        <div class="col-md-3">
+                            <h4 class="text-success">{{ total_hours_completed|default:"0" }}</h4>
+                            <p class="text-muted">Hours Completed</p>
+                        </div>
+                        <div class="col-md-3">
+                            <h4 class="text-info">{{ total_hours_estimated }}</h4>
+                            <p class="text-muted">Hours Estimated</p>
+                        </div>
+                        <div class="col-md-3">
+                            {% if total_hours_estimated > 0 %}
+                                <h4 class="text-warning">{{ total_hours_completed|default:"0"|divide:total_hours_estimated|multiply:100|floatformat:0 }}%</h4>
+                            {% else %}
+                                <h4 class="text-muted">0%</h4>
+                            {% endif %}
+                            <p class="text-muted">Complete</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recommended Courses -->
+        <div class="col-md-8">
+            <h3 class="mb-4">Recommended Courses</h3>
+            
+            {% if recommended_courses %}
+                <div class="row">
+                    {% for course in recommended_courses %}
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100 course-card">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <h5 class="card-title flex-grow-1">{{ course.skill }}</h5>
+                                        <span class="badge bg-primary">{{ course.hours_estimated }}h</span>
+                                    </div>
+                                    
+                                    <p class="card-text text-muted flex-grow-1">{{ course.course }}</p>
+                                    
+                                    <div class="mb-3">
+                                        <small class="text-muted">Progress</small>
+                                        <div class="progress mt-2">
+                                            {% if course.hours_estimated > 0 %}
+                                                <div class="progress-bar" style="width: {{ course.hours_completed|divide:course.hours_estimated|multiply:100|floatformat:0 }}%"></div>
+                                            {% else %}
+                                                <div class="progress-bar" style="width: 0%"></div>
+                                            {% endif %}
+                                        </div>
+                                        <small class="text-muted">{{ course.hours_completed }}/{{ course.hours_estimated }} hours</small>
+                                    </div>
+                                    
+                                    <a href="{% url 'quiz:track_progress' course.goal_id %}" class="btn btn-sm btn-outline-primary w-100">
+                                        Track Progress
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    <i class="ri-information-line"></i>
+                    You already have all the required skills! Consider expanding your expertise.
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Learning Goals Sidebar -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Active Learning Goals</h5>
+                </div>
+                <div class="card-body">
+                    {% if learning_goals %}
+                        <div class="list-group list-group-flush">
+                            {% for goal in learning_goals %}
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">{{ goal.skill.name }}</h6>
+                                        <small class="text-muted">
+                                            Target: {{ goal.target_proficiency|title }}
+                                        </small>
+                                    </div>
+                                    {% if goal.completed %}
+                                        <span class="badge bg-success">✓ Done</span>
+                                    {% else %}
+                                        <span class="badge bg-info">In Progress</span>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted text-center py-3">No active learning goals</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Timeline Card -->
+            <div class="card mt-3">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Your Timeline</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-2">Target Proficiency Level</p>
+                    <h5 class="text-success mb-3">{{ goal.target_proficiency|title }}</h5>
+                    
+                    <p class="text-muted mb-2">Target Date</p>
+                    <h5 class="text-info">
+                        {% if goal.deadline %}
+                            {{ goal.deadline|date:"F j, Y" }}
+                        {% else %}
+                            {{ goal.created_at|add_months:goal.target_timeline_months|date:"F j, Y" }}
+                        {% endif %}
+                    </h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .course-card {
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .course-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+</style>
+{% endblock %}

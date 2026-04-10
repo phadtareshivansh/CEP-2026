@@ -37,4 +37,18 @@ urlpatterns = [
     
     # Analytics
     path('admin/analytics/', views.analytics_dashboard, name='analytics'),
+    
+    # Career Roadmap & Learning Paths
+    path('career/<int:career_id>/roadmap/', views.career_roadmap, name='career_roadmap'),
+    path('career/<int:career_id>/learning-path/', views.learning_path, name='learning_path'),
+    path('learning-progress/<int:goal_id>/', views.track_learning_progress, name='track_progress'),
+    
+    # Career Comparison
+    path('career/compare/', views.career_comparison, name='career_comparison'),
+    
+    # Personalized Dashboard
+    path('dashboard/personalized/', views.personalized_dashboard, name='personalized_dashboard'),
+    
+    # Career Pivot Analysis
+    path('career/<int:target_career_id>/pivot-analysis/', views.career_pivot_analysis, name='career_pivot_analysis'),
 ]

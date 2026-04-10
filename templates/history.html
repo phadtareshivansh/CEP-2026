@@ -29,9 +29,9 @@
                                     <span class="badge bg-primary">{{ assessment.top_category }}</span>
                                 </td>
                                 <td>
-                                    {% for key, value in assessment.scores.items %}
+                                    {% for score_item in assessment.scores_list %}
                                         {% if forloop.counter <= 3 %}
-                                        <small class="badge bg-light text-dark me-1">{{ key }}: {{ value|floatformat:1 }}</small>
+                                        <small class="badge bg-light text-dark me-1">{{ score_item.0 }}: {{ score_item.1|floatformat:1 }}</small>
                                         {% endif %}
                                     {% endfor %}
                                 </td>

@@ -4,7 +4,8 @@ from .models import (
     UserProfile, Career, Skill, UserSkill, Assessment,
     CareerRoadmap, CareerBookmark, JobListing, Mentor,
     MentorRequest, ForumCategory, ForumPost, ForumReply,
-    UserSuccessStory, AnalyticsEvent
+    UserSuccessStory, AnalyticsEvent, UserCareerGoal,
+    LearningGoal, LearningProgress, CareerPivotAnalysis
 )
 
 
@@ -72,9 +73,17 @@ class UserSkillAdmin(admin.ModelAdmin):
 @admin.register(Assessment)
 class AssessmentAdmin(admin.ModelAdmin):
     list_display = ['get_user', 'top_category', 'completed_at', 'scores_summary']
-    list_filter = ['top_category', 'completed_at']
+    list_filter = ['top_category', 'completed_at', 'user']
     search_fields = ['user__username', 'session_id']
     readonly_fields = ['session_id', 'completed_at', 'scores']
+    fieldsets = (
+        ('User & Category', {
+            'fields': ('user', 'top_category')
+        }),
+        ('Data', {
+            'fields': ('session_id', 'scores', 'results', 'completed_at')
+        }),
+    )
     
     def get_user(self, obj):
         return obj.user.username if obj.user else 'Anonymous'
@@ -248,3 +257,88 @@ class AnalyticsEventAdmin(admin.ModelAdmin):
             return str(obj.metadata)[:100]
         return "—"
     event_data.short_description = "Metadata"
+
+
+@admin.register(UserCareerGoal)
+class UserCareerGoalAdmin(admin.ModelAdmin):
+    list_display = ['user', 'target_career', 'target_proficiency_level', 'target_timeline_months', 'updated_at']
+    list_filter = ['target_proficiency_level', 'updated_at']
+    search_fields = ['user__username', 'target_career__title']
+    readonly_fields = ['created_at', 'updated_at']
+    fieldsets = (
+        ('Career Goal', {
+            'fields': ('user', 'target_career')
+        }),
+        ('Target', {
+            'fields': ('target_proficiency_level', 'target_timeline_months')
+        }),
+        ('Notes', {
+            'fields': ('notes',)
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at')
+        }),
+    )
+
+
+@admin.register(LearningGoal)
+class LearningGoalAdmin(admin.ModelAdmin):
+    list_display = ['user', 'skill', 'target_proficiency', 'estimated_hours', 'completed']
+    list_filter = ['completed', 'target_proficiency', 'created_at']
+    search_fields = ['user__username', 'skill__name']
+    readonly_fields = ['created_at']
+    fieldsets = (
+        ('User & Skill', {
+            'fields': ('user', 'skill')
+        }),
+        ('Target', {
+            'fields': ('target_proficiency', 'estimated_hours', 'deadline')
+        }),
+        ('Status', {
+            'fields': ('completed',)
+        }),
+        ('Timestamps', {
+            'fields': ('created_at',)
+        }),
+    )
+
+
+@admin.register(LearningProgress)
+class LearningProgressAdmin(admin.ModelAdmin):
+    list_display = ['learning_goal', 'hours_completed', 'completed_percentage', 'logged_at']
+    list_filter = ['completed_percentage', 'logged_at']
+    search_fields = ['learning_goal__user__username', 'learning_goal__skill__name']
+    readonly_fields = ['logged_at']
+    fieldsets = (
+        ('Goal', {
+            'fields': ('learning_goal',)
+        }),
+        ('Progress', {
+            'fields': ('hours_completed', 'completed_percentage', 'milestone_reached')
+        }),
+        ('Courses', {
+            'fields': ('courses_completed',)
+        }),
+        ('Timestamps', {
+            'fields': ('logged_at',)
+        }),
+    )
+
+
+@admin.register(CareerPivotAnalysis)
+class CareerPivotAnalysisAdmin(admin.ModelAdmin):
+    list_display = ['user', 'current_career_type', 'target_career', 'ai_generated', 'created_at']
+    list_filter = ['ai_generated', 'created_at']
+    search_fields = ['user__username', 'current_career_type', 'target_career__title']
+    readonly_fields = ['created_at', 'analysis']
+    fieldsets = (
+        ('User & Career', {
+            'fields': ('user', 'current_career_type', 'target_career')
+        }),
+        ('Analysis', {
+            'fields': ('analysis',)
+        }),
+        ('Metadata', {
+            'fields': ('ai_generated', 'created_at')
+        }),
+    )

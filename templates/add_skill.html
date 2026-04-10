@@ -1,0 +1,382 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Skills | Saarthi{% endblock %}
+
+{% block content %}
+<style>
+    .add-skill-hero {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2.5rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+    }
+
+    .skill-selector-card {
+        background: white;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .skill-selector-card:hover {
+        border-color: #667eea;
+        box-shadow: 0 8px 16px rgba(102, 126, 234, 0.15);
+        transform: translateY(-2px);
+    }
+
+    .skill-selector-card.already-added {
+        background: #f0fdf4;
+        border-color: #10b981;
+    }
+
+    .skill-name {
+        font-weight: 700;
+        color: #1f2937;
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .skill-description {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+
+    .skill-badge {
+        display: inline-block;
+        background: #e0e7ff;
+        color: #667eea;
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .skill-badge.added {
+        background: #dcfce7;
+        color: #15803d;
+    }
+
+    .form-section {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .category-header {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #333;
+        margin: 2.5rem 0 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 3px solid #667eea;
+    }
+
+    .proficiency-select {
+        padding: 0.5rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        color: #333;
+        background: white;
+        width: 100%;
+    }
+
+    .proficiency-select:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .proficiency-option {
+        height: 35px;
+        padding: 0.5rem 1rem;
+        margin: 0.5rem 0;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+        background: white;
+        font-size: 0.95rem;
+    }
+
+    .proficiency-option:hover {
+        border-color: #667eea;
+        background: #f0f4ff;
+    }
+
+    .proficiency-option.selected {
+        background: #667eea;
+        color: white;
+        border-color: #667eea;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.2s;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .add-button {
+        padding: 0.75rem 1.5rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 0.95rem;
+    }
+
+    .add-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+    }
+
+    .add-button:active {
+        transform: translateY(0);
+    }
+
+    .skill-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .inline-form {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-top: 1rem;
+        display: none;
+    }
+
+    .inline-form.active {
+        display: block;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .back-button {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        background: #f0f4ff;
+        color: #667eea;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        margin-bottom: 2rem;
+        transition: all 0.2s;
+    }
+
+    .back-button:hover {
+        background: #e0e7ff;
+    }
+
+    .empty-state {
+        background: #f0fdf4;
+        border: 2px dashed #10b981;
+        border-radius: 12px;
+        padding: 3rem 2rem;
+        text-align: center;
+        color: #166534;
+    }
+
+    .empty-state-title {
+        font-weight: 700;
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+    }
+</style>
+
+<div class="container mt-5 mb-5">
+    <!-- Hero -->
+    <div class="add-skill-hero">
+        <h1>➕ Add Skills to Your Profile</h1>
+        <p style="opacity: 0.9; font-size: 1.1rem; margin-top: 0.5rem;">
+            Build your skill inventory and track your proficiency levels
+        </p>
+    </div>
+
+    <a href="{% url 'quiz:skills_assessment' %}" class="back-button">← Back to Skills Assessment</a>
+
+    <!-- Instructions -->
+    <div style="background: #dbeafe; border-left: 4px solid #3b82f6; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+        <p style="color: #1e40af; margin: 0;">
+            <strong>💡 How it works:</strong> Select a skill from the categories below, choose your proficiency level (1-5) and years of experience, then click "Add Skill". You can update existing skills at any time.
+        </p>
+    </div>
+
+    <!-- Messages -->
+    {% if messages %}
+        {% for message in messages %}
+        <div style="background: {% if message.tags %}{{ message.tags }}{% else %}#dbeafe{% endif %}; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+            {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Skills by Category -->
+    {% if skills_by_category %}
+        {% for category, skills in skills_by_category.items %}
+        <div class="category-header">{{ category }}</div>
+        
+        <div style="margin-bottom: 3rem;">
+            {% for skill in skills %}
+            <div class="skill-selector-card {% if skill.already_added %}already-added{% endif %}" data-skill-id="{{ skill.id }}" data-skill-name="{{ skill.name }}">
+                <div style="display: flex; justify-content: space-between; align-items: start;">
+                    <div style="flex: 1;">
+                        <div class="skill-name">{{ skill.name }}</div>
+                        {% if skill.description %}
+                        <div class="skill-description">{{ skill.description }}</div>
+                        {% endif %}
+                        <span class="skill-badge {% if skill.already_added %}added{% endif %}">
+                            {% if skill.already_added %}✓ Already Added{% else %}+ Add to Profile{% endif %}
+                        </span>
+                    </div>
+                    <button type="button" class="add-button toggle-form" data-skill-id="{{ skill.id }}">
+                        {% if skill.already_added %}Update{% else %}Add{% endif %}
+                    </button>
+                </div>
+
+                <!-- Inline Form -->
+                <div class="inline-form" id="form-{{ skill.id }}">
+                    <form method="POST" class="skill-form" data-skill-id="{{ skill.id }}">
+                        {% csrf_token %}
+                        <input type="hidden" name="skill_id" value="{{ skill.id }}">
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">📊 Proficiency Level</label>
+                                <select name="proficiency_level" class="proficiency-select" required>
+                                    <option value="novice">🔴 Novice</option>
+                                    <option value="beginner">🟠 Beginner</option>
+                                    <option value="intermediate" selected>🟡 Intermediate</option>
+                                    <option value="advanced">🔵 Advanced</option>
+                                    <option value="expert">🟣 Expert</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">📅 Years of Experience</label>
+                                <input type="number" name="years_of_experience" class="form-input" value="0" min="0" max="60" step="0.5">
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 1rem;">
+                            <button type="submit" class="add-button">✓ Save Skill</button>
+                            <button type="button" class="add-button" style="background: #e5e7eb; color: #333;" onclick="this.closest('.inline-form').classList.remove('active');">✕ Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-title">No skills available</div>
+        <p>Skills database is empty. Please contact administrator.</p>
+    </div>
+    {% endif %}
+
+    <!-- Summary Section -->
+    {% if user_skills %}
+    <div class="form-section" style="margin-top: 4rem;">
+        <h3 style="color: #333; margin-bottom: 1.5rem;">📝 Your Current Skills ({{ user_skills.count }})</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem;">
+            {% for user_skill in user_skills %}
+            <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; border-left: 4px solid #667eea;">
+                <div style="font-weight: 700; color: #1f2937; margin-bottom: 0.5rem;">{{ user_skill.skill.name }}</div>
+                <div style="font-size: 0.9rem; color: #666; margin-bottom: 0.25rem;">
+                    Level: <strong>{{ user_skill.proficiency_level|title }}</strong>
+                </div>
+                <div style="font-size: 0.9rem; color: #666;">
+                    Experience: <strong>{{ user_skill.years_of_experience }} years</strong>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <div style="text-align: center; margin-top: 3rem; padding: 2rem; background: #f0f4ff; border-radius: 12px;">
+        <p style="color: #667eea; font-size: 0.95rem; margin: 0;">
+            ℹ️ <strong>Pro Tip:</strong> Keep your skills profile updated to get accurate career recommendations and skills gap analysis!
+        </p>
+    </div>
+</div>
+
+<script>
+    // Toggle inline form
+    document.querySelectorAll('.toggle-form').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const skillId = this.dataset.skillId;
+            const form = document.getElementById(`form-${skillId}`);
+            form.classList.toggle('active');
+        });
+    });
+
+    // Handle form submission
+    document.querySelectorAll('.skill-form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const skillId = this.dataset.skillId;
+            const formData = new FormData(this);
+            
+            // Submit via fetch API for smooth experience
+            fetch('', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                }
+            })
+            .then(response => response.text())
+            .then(html => {
+                // Redirect to skills assessment page
+                window.location.href = '{% url "quiz:skills_assessment" %}';
+            })
+            .catch(error => {
+                alert('Error adding skill: ' + error);
+            });
+        });
+    });
+</script>
+
+{% endblock %}

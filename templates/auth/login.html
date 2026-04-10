@@ -1,42 +1,112 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container d-flex justify-content-center align-items-center" style="min-height: 70vh;">
-    <div class="card" style="width: 100%; max-width: 400px;">
-        <div class="card-body">
+<style>
+    .auth-container {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 80vh;
+        margin: 0;
+        padding: 2rem 1rem;
+    }
+    
+    .auth-card {
+        background: white;
+        border-radius: 25px;
+        padding: 3rem;
+        box-shadow: 0 20px 60px rgba(102, 126, 234, 0.2);
+        max-width: 450px;
+        width: 100%;
+        border: 1px solid rgba(102, 126, 234, 0.1);
+    }
+    
+    .auth-card h3 {
+        font-size: 2rem;
+        font-weight: 900;
+        color: #1a202c;
+        margin-bottom: 0.5rem;
+        text-align: center;
+    }
+    
+    .auth-subtitle {
+        text-align: center;
+        color: #999;
+        font-size: 0.95rem;
+        margin-bottom: 2.5rem;
+    }
+    
+    .auth-form-group {
+        margin-bottom: 2rem;
+    }
+    
+    .auth-form-group label {
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: #1a202c;
+        margin-bottom: 0.8rem;
+        display: block;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .auth-form-group input {
+        width: 100%;
+        padding: 1.2rem 1.4rem;
+        border: 2px solid #e8ecf8;
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+    
+    .auth-form-group input:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+        outline: none;
+        transform: translateY(-2px);
+    }
+</style>
+<div class="auth-container">
+    <div class="auth-card">
+        <h3>🔐 Login</h3>
+        <p class="auth-subtitle">Welcome back to Saarthi</p>
             <h3 class="card-title text-center mb-4">🔐 Secure Login</h3>
             
-            {% if session_expired %}
-            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                <strong>⏰ Session Expired</strong>
-                <p>Your session has expired due to inactivity. Please login again.</p>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-            {% endif %}
-            
-            <div id="alertMessage" style="display: none;">
-                <!-- Alert messages will be inserted here -->
-            </div>
-            
-            <form id="loginForm">
-                {% csrf_token %}
-                <div class="mb-3">
-                    <label class="form-label">Username</label>
-                    <input type="text" class="form-control" id="username" name="username" required autofocus>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password" name="password" required>
-                </div>
-                <button type="submit" class="btn btn-primary w-100">Login</button>
-            </form>
-            
-            <hr>
-            <p class="text-center small text-muted">
-                💡 Session expires after 30 minutes of inactivity for security
-            </p>
-            <p class="text-center">Don't have an account? <a href="{% url 'quiz:signup' %}">Sign up here</a></p>
+        {% if session_expired %}
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong>⏰ Session Expired</strong>
+            <p>Your session has expired due to inactivity. Please login again.</p>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
+        {% endif %}
+        
+        <div id="alertMessage" style="display: none;">
+            <!-- Alert messages will be inserted here -->
+        </div>
+        
+        <form id="loginForm">
+            {% csrf_token %}
+            <div class="auth-form-group">
+                <label for="username">👤 Username</label>
+                <input type="text" id="username" name="username" placeholder="Enter your username" required autofocus>
+            </div>
+            <div class="auth-form-group">
+                <label for="password">🔑 Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            </div>
+            <button type="submit" class="btn-primary w-100" style="margin-top: 1.5rem; position: relative; z-index: 1;">🚀 Login</button>
+        </form>
+        
+        <hr style="margin: 2.5rem 0; border-color: #e8ecf8;">
+        <p style="text-align: center; font-size: 0.9rem; color: #666; margin: 0;">
+            💡 Session expires after 30 minutes of inactivity for security
+        </p>
+        <p style="text-align: center; margin-top: 1.5rem; color: #666;">
+            Don't have an account? <a href="{% url 'quiz:signup' %}" style="color: #667eea; font-weight: 700; text-decoration: none;">Sign up here</a>
+        </p>
     </div>
 </div>
 

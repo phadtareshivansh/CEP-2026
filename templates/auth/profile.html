@@ -1,60 +1,499 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container mt-5">
-    <h1>👤 My Profile</h1>
-    
-    <div class="row">
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body text-center">
-                    {% if profile.profile_picture %}
-                    <img src="{{ profile.profile_picture.url }}" class="rounded-circle mb-3" width="150">
-                    {% else %}
-                    <div class="bg-secondary rounded-circle mb-3 mx-auto" style="width: 150px; height: 150px; display: flex; align-items: center; justify-content: center;">
-                        <span class="text-white text-5xl">👤</span>
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 20%, #f093fb 100%);
+        min-height: 100vh;
+        position: relative;
+    }
+
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><defs><pattern id="dots" x="0" y="0" width="50" height="50" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="2" fill="white" opacity="0.05"/></pattern></defs><rect width="1200" height="600" fill="url(%23dots)"/></svg>');
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .profile-wrapper {
+        position: relative;
+        z-index: 1;
+    }
+
+    .profile-header {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.95) 0%, rgba(118, 75, 162, 0.95) 100%);
+        color: white;
+        padding: 5rem 3rem;
+        border-radius: 30px;
+        margin: 2rem auto;
+        box-shadow: 0 20px 60px rgba(102, 126, 234, 0.4);
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        backdrop-filter: blur(10px);
+        max-width: 1000px;
+        margin-top: 3rem;
+        margin-bottom: 3rem;
+    }
+
+    .profile-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: float 6s ease-in-out infinite;
+    }
+
+    .profile-header::after {
+        content: '';
+        position: absolute;
+        bottom: -30%;
+        left: -5%;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: float 8s ease-in-out infinite reverse;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-20px) rotate(5deg); }
+    }
+
+    .profile-header h1 {
+        margin: 0;
+        font-size: 3rem;
+        font-weight: 900;
+        position: relative;
+        z-index: 1;
+        text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .profile-header p {
+        margin: 1rem 0 0 0;
+        font-size: 1.2rem;
+        opacity: 0.95;
+        position: relative;
+        z-index: 1;
+        font-weight: 500;
+    }
+
+    .profile-container {
+        background: white;
+        border-radius: 30px;
+        box-shadow: 0 20px 60px rgba(102, 126, 234, 0.15);
+        overflow: hidden;
+        margin: 0 auto 4rem;
+        max-width: 1000px;
+        border: 1px solid rgba(102, 126, 234, 0.1);
+    }
+
+    .profile-avatar-section {
+        padding: 4rem 3rem;
+        text-align: center;
+        background: linear-gradient(135deg, #f8f9ff 0%, #f3f0ff 50%, #fef3ff 100%);
+        border-bottom: 2px solid #f0e6ff;
+        position: relative;
+    }
+
+    .profile-avatar-section::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 200px;
+        height: 200px;
+        background: radial-gradient(circle, rgba(102, 126, 234, 0.05) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+
+    .avatar-container {
+        position: relative;
+        display: inline-block;
+        margin-bottom: 2rem;
+    }
+
+    .profile-avatar {
+        width: 200px;
+        height: 200px;
+        margin: 0 auto;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 15px 40px rgba(102, 126, 234, 0.25);
+        font-size: 5.5rem;
+        border: 5px solid white;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.3s ease;
+    }
+
+    .profile-avatar:hover {
+        transform: scale(1.05);
+    }
+
+    .profile-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+
+    .avatar-badge {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        background: #10b981;
+        color: white;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        border: 3px solid white;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    .profile-name {
+        font-size: 2rem;
+        font-weight: 900;
+        color: #1a202c;
+        margin: 1rem 0 0.5rem 0;
+        position: relative;
+        z-index: 1;
+    }
+
+    .profile-role {
+        font-size: 1.15rem;
+        color: #667eea;
+        font-weight: 700;
+        margin: 0;
+        position: relative;
+        z-index: 1;
+        letter-spacing: 0.5px;
+    }
+
+    .profile-info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-top: 2rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .profile-stat {
+        background: white;
+        padding: 1.2rem;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        text-align: center;
+    }
+
+    .stat-value {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #667eea;
+        margin: 0;
+    }
+
+    .stat-label {
+        font-size: 0.85rem;
+        color: #999;
+        margin: 0.5rem 0 0 0;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .profile-form-section {
+        padding: 4rem 3rem;
+    }
+
+    .form-section-title {
+        font-size: 1.8rem;
+        font-weight: 900;
+        color: #1a202c;
+        margin-bottom: 2.5rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 3px solid #667eea;
+        position: relative;
+    }
+
+    .form-section-title::after {
+        content: '';
+        position: absolute;
+        bottom: -3px;
+        left: 0;
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+    }
+
+    .form-group {
+        margin-bottom: 2.5rem;
+    }
+
+    .form-group label {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #1a202c;
+        margin-bottom: 0.8rem;
+        display: block;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 0.95rem;
+    }
+
+    .form-control, .form-select {
+        width: 100%;
+        padding: 1.2rem 1.4rem;
+        border: 2px solid #e8ecf8;
+        border-radius: 15px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: white;
+        color: #333;
+        font-family: inherit;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+        outline: none;
+        transform: translateY(-2px);
+    }
+
+    .form-control::placeholder {
+        color: #bbb;
+    }
+
+    .form-control, .form-select {
+        background-image: linear-gradient(white, white), linear-gradient(135deg, #667eea, #764ba2);
+        background-clip: padding-box, border-box;
+        background-origin: padding-box, border-box;
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .btn-save {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1.3rem 3rem;
+        border: none;
+        border-radius: 15px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-save::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+
+    .btn-save:hover::before {
+        width: 300px;
+        height: 300px;
+    }
+
+    .btn-save:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 40px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-save:active {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .success-message {
+        background: linear-gradient(135deg, #dcfce7 0%, #d1fae5 100%);
+        border-left: 5px solid #10b981;
+        padding: 1.5rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        animation: slideDown 0.3s ease;
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.15);
+    }
+
+    .success-message p {
+        margin: 0;
+        color: #065f46;
+        font-weight: 700;
+        font-size: 1rem;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .profile-header {
+            padding: 3rem 2rem;
+        }
+
+        .profile-header h1 {
+            font-size: 2rem;
+        }
+
+        .profile-avatar {
+            width: 150px;
+            height: 150px;
+            font-size: 3.5rem;
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+        }
+
+        .profile-avatar-section {
+            padding: 2.5rem 2rem;
+        }
+
+        .profile-form-section {
+            padding: 2.5rem;
+        }
+
+        .profile-info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .form-section-title {
+            font-size: 1.4rem;
+        }
+    }
+</style>
+
+<div class="profile-wrapper container" style="margin-top: 0; margin-bottom: 0; max-width: 100%; padding: 0;">
+    <!-- Success Messages -->
+    {% if messages %}
+    {% for message in messages %}
+    <div class="success-message" style="max-width: 1000px; margin-left: auto; margin-right: auto; margin-top: 2rem;">
+        <p>✓ {{ message }}</p>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <!-- Header -->
+    <div class="profile-header">
+        <h1>👤 My Profile</h1>
+        <p>Craft your professional identity and showcase your potential</p>
+    </div>
+
+    <!-- Profile Container -->
+    <div style="max-width: 1000px; margin-left: auto; margin-right: auto; padding: 0 1rem;">
+        <div class="profile-container">
+            <div style="display: grid; grid-template-columns: 1fr; gap: 0;">
+                <!-- Avatar Section -->
+                <div class="profile-avatar-section">
+                    <div class="avatar-container">
+                        {% if profile.profile_picture %}
+                        <div class="profile-avatar">
+                            <img src="{{ profile.profile_picture.url }}" alt="Profile Picture">
+                        </div>
+                        {% else %}
+                        <div class="profile-avatar">👤</div>
+                        {% endif %}
+                        <div class="avatar-badge">✓</div>
                     </div>
-                    {% endif %}
-                    <h4>{{ user.get_full_name|default:user.username }}</h4>
-                    <p class="text-muted">{{ profile.current_role|default:"No role set" }}</p>
+                    <h3 class="profile-name">{{ user.get_full_name|default:user.username }}</h3>
+                    <p class="profile-role">{{ profile.current_role|default:"Career Explorer" }}</p>
+                    
+                    <div class="profile-info-grid">
+                        <div class="profile-stat">
+                            <p class="stat-value">{{ assessments|length }}</p>
+                            <p class="stat-label">Assessments</p>
+                        </div>
+                        <div class="profile-stat">
+                            <p class="stat-value">⭐</p>
+                            <p class="stat-label">Member</p>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-        
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
-                    <h5>Profile Information</h5>
-                </div>
-                <div class="card-body">
+
+                <!-- Form Section -->
+                <div class="profile-form-section">
+                    <h2 class="form-section-title">Profile Information</h2>
+                    
                     <form method="POST">
                         {% csrf_token %}
-                        <div class="mb-3">
-                            <label class="form-label">Bio</label>
-                            <textarea class="form-control" name="bio" rows="3">{{ profile.bio }}</textarea>
+                        
+                        <div class="form-group">
+                            <label for="bio">📝 About You</label>
+                            <textarea class="form-control" id="bio" name="bio" rows="4" placeholder="Share your career aspirations, interests, and achievements...">{{ profile.bio }}</textarea>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Location</label>
-                            <input type="text" class="form-control" name="location" value="{{ profile.location }}">
+
+                        <div class="form-group">
+                            <label for="location">📍 Location</label>
+                            <input type="text" class="form-control" id="location" name="location" placeholder="City, Country" value="{{ profile.location }}">
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Current Role</label>
-                            <input type="text" class="form-control" name="current_role" value="{{ profile.current_role }}">
+
+                        <div class="form-group">
+                            <label for="current_role">💼 Current Role</label>
+                            <input type="text" class="form-control" id="current_role" name="current_role" placeholder="e.g., Software Engineer, Student, Freelancer" value="{{ profile.current_role }}">
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Experience Level</label>
-                            <select class="form-select" name="experience_level">
-                                <option value="student" {% if profile.experience_level == 'student' %}selected{% endif %}>Student</option>
-                                <option value="entry" {% if profile.experience_level == 'entry' %}selected{% endif %}>Entry Level</option>
-                                <option value="mid" {% if profile.experience_level == 'mid' %}selected{% endif %}>Mid Level</option>
-                                <option value="senior" {% if profile.experience_level == 'senior' %}selected{% endif %}>Senior</option>
+
+                        <div class="form-group">
+                            <label for="experience_level">🎯 Experience Level</label>
+                            <select class="form-select" id="experience_level" name="experience_level">
+                                <option value="student" {% if profile.experience_level == 'student' %}selected{% endif %}>🎓 Student</option>
+                                <option value="entry" {% if profile.experience_level == 'entry' %}selected{% endif %}>📚 Entry Level (0-2 years)</option>
+                                <option value="mid" {% if profile.experience_level == 'mid' %}selected{% endif %}>💼 Mid Level (2-5 years)</option>
+                                <option value="senior" {% if profile.experience_level == 'senior' %}selected{% endif %}>🚀 Senior (5+ years)</option>
                             </select>
                         </div>
-                        <button type="submit" class="btn btn-primary">Save Profile</button>
+
+                        <div style="margin-top: 3rem; padding-top: 2.5rem; border-top: 2px solid #f0e6ff;">
+                            <button type="submit" class="btn-save">💾 Save Profile Changes</button>
+                        </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 {% endblock %}

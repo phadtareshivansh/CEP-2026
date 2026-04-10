@@ -10,13 +10,245 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     {% block extra_css %}{% endblock %}
     <style>
-        .navbar-custom {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        html {
+            margin: 0;
+            padding: 0;
         }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a2a3a 0%, #243447 100%) !important;
+        }
+
+        main#app-container {
+            flex: 1;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+
+        @media (max-width: 768px) {
+            main#app-container {
+                padding: 24px 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            main#app-container {
+                padding: 16px 12px;
+            }
+        }
+
+        .container-fluid {
+            background: transparent;
+        }
+
+        .navbar-custom {
+            background: rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1.2rem 2rem;
+        }
+
         .navbar-custom .navbar-brand {
-            font-weight: 800;
-            font-size: 1.5rem;
+            font-weight: 700;
+            font-size: 1.4rem;
+            color: white !important;
+            letter-spacing: 0.3px;
+        }
+
+        .navbar-custom .navbar-nav {
+            gap: 2rem;
+        }
+
+        .navbar-custom .nav-link {
+            color: rgba(255, 255, 255, 0.85) !important;
+            font-weight: 500;
+            font-size: 0.95rem;
+            padding: 0 !important;
+            margin: 0 !important;
+            transition: color 0.2s ease;
+            letter-spacing: 0.3px;
+        }
+
+        .navbar-custom .nav-link:hover {
+            color: white !important;
+        }
+
+        .navbar-custom .dropdown-menu {
+            background: white;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            padding: 8px 0;
+        }
+
+        .navbar-custom .dropdown-item {
+            color: #333;
+            padding: 10px 20px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .navbar-custom .dropdown-item:hover {
+            background: #f0f0f0;
+            color: #667eea;
+        }
+
+        .btn-get-started {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white !important;
+            padding: 10px 24px !important;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: none !important;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+        }
+
+        .btn-get-started:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-get-started:active {
+            transform: translateY(0);
+        }
+
+        .btn-sign-in {
+            color: rgba(255, 255, 255, 0.85) !important;
+            background: transparent !important;
+            border: none !important;
+            padding: 0 !important;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.2s ease;
+            text-decoration: none;
+        }
+
+        .btn-sign-in:hover {
+            color: white !important;
+        }
+
+        #theme-toggle {
+            background: rgba(255, 255, 255, 0.2) !important;
+            border: none !important;
+            color: white !important;
+            padding: 6px 10px !important;
+            border-radius: 6px !important;
+            transition: all 0.2s !important;
+            font-size: 0.9rem;
+            margin-left: 16px;
+        }
+
+        #theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.3) !important;
+        }
+
+        /* Modal form styling - PRIORITY */
+        .modal-content {
+            position: relative;
+            z-index: 1051 !important;
+        }
+
+        .modal-dialog {
+            z-index: 1051 !important;
+        }
+
+        .modal .form-control,
+        .modal .form-select,
+        .modal textarea,
+        .modal input[type="text"],
+        .modal input[type="email"],
+        .modal input[type="password"],
+        .modal input[type="search"],
+        .modal select {
+            position: relative !important;
+            z-index: 1052 !important;
+            pointer-events: auto !important;
+            background-color: white !important;
+            border: 1px solid #ccc !important;
+            color: #000 !important;
+            -webkit-appearance: none !important;
+            appearance: none !important;
+        }
+
+        .modal .form-control:focus,
+        .modal .form-select:focus,
+        .modal textarea:focus,
+        .modal input:focus {
+            z-index: 1052 !important;
+            outline: none !important;
+            border-color: #667eea !important;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25) !important;
+        }
+
+        .modal input::placeholder,
+        .modal textarea::placeholder {
+            color: #999 !important;
+        }
+
+        .modal-backdrop {
+            z-index: 1040 !important;
+        }
+
+        .modal {
+            z-index: 1050 !important;
+        }
+
+        .modal-body {
+            z-index: 1051 !important;
+            position: relative;
+        }
+
+        .modal-body .mb-3 {
+            position: relative;
+            z-index: 1052 !important;
+        }
+
+        .modal-body input,
+        .modal-body textarea,
+        .modal-body select {
+            cursor: text !important;
+        }
+
+        @media (max-width: 991px) {
+            .navbar-custom {
+                padding: 1rem 1rem;
+            }
+
+            .navbar-custom .navbar-nav {
+                gap: 1rem;
+                margin-top: 1rem;
+            }
+
+            .navbar-custom .nav-link {
+                padding: 8px 0 !important;
+            }
+
+            .btn-get-started {
+                width: 100%;
+                text-align: center;
+                margin-top: 10px;
+            }
+
+            .btn-sign-in {
+                display: block;
+                padding: 8px 0 !important;
+                margin-bottom: 10px;
+            }
         }
     </style>
 </head>
@@ -24,28 +256,28 @@
     <!-- Updated Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'quiz:index' %}">🎯 Saarthi</a>
+            <a class="navbar-brand" href="{% url 'quiz:index' %}">Saarthi</a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'quiz:start_assessment' %}">📝 Quiz</a>
+                        <a class="nav-link" href="{% url 'quiz:start_assessment' %}">Quiz</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'quiz:forum' %}">💬 Forum</a>
+                        <a class="nav-link" href="{% url 'quiz:forum' %}">Forum</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'quiz:skills_assessment' %}">⚡ Skills</a>
+                        <a class="nav-link" href="{% url 'quiz:skills_assessment' %}">Skills</a>
                     </li>
                     
                     {% if user.is_authenticated %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                            👤 {{ user.username }}
+                            {{ user.username }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="{% url 'quiz:dashboard' %}">Dashboard</a></li>
@@ -56,15 +288,15 @@
                     </li>
                     {% else %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'quiz:login' %}">🔐 Login</a>
+                        <a class="btn-sign-in" href="{% url 'quiz:login' %}">Sign In</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'quiz:signup' %}">📝 Sign Up</a>
+                        <a href="{% url 'quiz:signup' %}" class="btn btn-get-started">Get Started</a>
                     </li>
                     {% endif %}
                     
                     <li class="nav-item">
-                        <button id="theme-toggle" class="btn btn-sm btn-light" onclick="toggleDarkMode()" title="Toggle Dark Mode">🌙</button>
+                        <button id="theme-toggle" class="btn" onclick="toggleDarkMode()" title="Toggle Dark Mode">🌙</button>
                     </li>
                 </ul>
             </div>

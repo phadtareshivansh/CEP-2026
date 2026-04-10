@@ -1,0 +1,257 @@
+{% extends 'base.html' %}
+
+{% block title %}Career Pivot Analysis - Saarthi{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Header -->
+    <div class="row mb-5">
+        <div class="col-md-12">
+            <h1 class="display-5">Career Pivot Analysis</h1>
+            <p class="text-muted fs-5">
+                Can you transition from <strong>{{ current_career }}</strong> to <strong>{{ target_career.title }}</strong>?
+            </p>
+        </div>
+    </div>
+
+    {% if analysis %}
+        <div class="row mb-5">
+            <!-- Readiness Score -->
+            <div class="col-md-4">
+                <div class="card bg-gradient text-white border-0 mb-4" 
+                     style="background: linear-gradient(135deg, {% if analysis.analysis.readiness_score >= 70 %}#28a745{% elif analysis.analysis.readiness_score >= 50 %}#ffc107{% else %}#dc3545{% endif %} 0%, {% if analysis.analysis.readiness_score >= 70 %}#20c997{% elif analysis.analysis.readiness_score >= 50 %}#ff6b6b{% else %}#c82333{% endif %} 100%);">
+                    <div class="card-body text-center">
+                        <h1 class="mb-2">{{ analysis.analysis.readiness_score }}%</h1>
+                        <p class="mb-0">
+                            {% if analysis.analysis.readiness_score >= 70 %}
+                                ✓ Highly Feasible
+                            {% elif analysis.analysis.readiness_score >= 50 %}
+                                ⚠️ Moderately Feasible
+                            {% else %}
+                                ✗ Challenging
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Metrics -->
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">⏱️ Transition Timeline</h5>
+                    </div>
+                    <div class="card-body">
+                        <h3 class="text-info mb-1">{{ analysis.analysis.retraining_months }}</h3>
+                        <p class="text-muted mb-3">Months to transition</p>
+                        <p class="small">
+                            This is an estimate based on your current skills and the target career's requirements.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Salary Impact -->
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-header {% if analysis.analysis.salary_change > 0 %}bg-success{% else %}bg-warning{% endif %} text-white">
+                        <h5 class="mb-0">💰 Salary Change</h5>
+                    </div>
+                    <div class="card-body">
+                        <h3 class="{% if analysis.analysis.salary_change > 0 %}text-success{% else %}text-warning{% endif %} mb-1">
+                            {% if analysis.analysis.salary_change > 0 %}
+                                +{{ analysis.analysis.salary_change|floatformat:0 }}
+                            {% else %}
+                                {{ analysis.analysis.salary_change|floatformat:0 }}
+                            {% endif %}
+                        </h3>
+                        <p class="text-muted mb-3">Estimated change</p>
+                        <p class="small">
+                            {% if target_career.avg_salary %}
+                                Target career average: <strong>${{ target_career.avg_salary|floatformat:0 }}</strong>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Analysis Content -->
+        <div class="row">
+            <!-- Skills Gap -->
+            <div class="col-md-8 mb-4">
+                <!-- Skills You Need to Develop -->
+                <div class="card mb-4">
+                    <div class="card-header bg-danger text-white">
+                        <h5 class="mb-0">🎯 Skills You Need to Develop</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if analysis.analysis.skills_gap %}
+                            <div class="row">
+                                {% for skill in analysis.analysis.skills_gap %}
+                                    <div class="col-md-6 mb-3">
+                                        <div class="alert alert-warning py-2 mb-2">
+                                            <i class="ri-alert-line"></i> {{ skill }}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p class="text-success mb-0">✓ You already have most required skills!</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Top Challenges -->
+                <div class="card mb-4">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="mb-0">⚠️ Top Challenges</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if analysis.analysis.top_challenges %}
+                            <ol>
+                                {% for challenge in analysis.analysis.top_challenges %}
+                                    <li class="mb-2">{{ challenge }}</li>
+                                {% endfor %}
+                            </ol>
+                        {% else %}
+                            <p class="text-muted">No major challenges identified.</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Success Tips -->
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">✓ Success Tips</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if analysis.analysis.success_tips %}
+                            <ul class="list-group list-group-flush">
+                                {% for tip in analysis.analysis.success_tips %}
+                                    <li class="list-group-item d-flex align-items-start">
+                                        <span class="badge bg-success me-2 mt-1">✓</span>
+                                        <span>{{ tip }}</span>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="text-muted">No specific tips available.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-md-4">
+                <!-- Career Comparison -->
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Career Comparison</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-sm">
+                            <tr>
+                                <td><strong>Current</strong></td>
+                                <td>{{ current_career }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Target</strong></td>
+                                <td>
+                                    <strong class="text-primary">{{ target_career.title }}</strong>
+                                </td>
+                            </tr>
+                            {% if target_career.description %}
+                                <tr>
+                                    <td><strong>Description</strong></td>
+                                    <td><small>{{ target_career.description }}</small></td>
+                                </tr>
+                            {% endif %}
+                            {% if target_career.avg_salary %}
+                                <tr>
+                                    <td><strong>Avg Salary</strong></td>
+                                    <td>${{ target_career.avg_salary|floatformat:0 }}</td>
+                                </tr>
+                            {% endif %}
+                            {% if target_career.growth_rate %}
+                                <tr>
+                                    <td><strong>Job Growth</strong></td>
+                                    <td>
+                                        <span class="badge bg-success">{{ target_career.growth_rate }}</span>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Action Plan -->
+                <div class="card mb-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">📋 Next Steps</h5>
+                    </div>
+                    <div class="card-body">
+                        <ol class="small">
+                            <li class="mb-2">Complete the identified skill gaps</li>
+                            <li class="mb-2">Build portfolio projects in target field</li>
+                            <li class="mb-2">Network with professionals in the industry</li>
+                            <li class="mb-2">Consider internships or entry-level positions</li>
+                            <li class="mb-2">Get relevant certifications</li>
+                            <li class="mb-2">Apply for transition roles</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0">Actions</h5>
+                    </div>
+                    <div class="card-body d-grid gap-2">
+                        <a href="{% url 'quiz:learning_path' target_career.id %}" class="btn btn-primary btn-sm">
+                            <i class="ri-book-line"></i> Learning Path
+                        </a>
+                        <a href="{% url 'quiz:career_roadmap' target_career.id %}" class="btn btn-outline-primary btn-sm">
+                            <i class="ri-map-line"></i> Career Roadmap
+                        </a>
+                        <a href="{% url 'quiz:career_comparison' %}?careers={{ target_career.id }}" class="btn btn-outline-secondary btn-sm">
+                            <i class="ri-compare-line"></i> Compare Careers
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Analysis Info -->
+                <div class="alert alert-info mt-4 small">
+                    <i class="ri-information-line"></i>
+                    <strong>About this analysis:</strong> This is an AI-powered assessment based on industry data and your current profile. Use it as a guide, not a definitive answer.
+                </div>
+            </div>
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="row mt-5">
+            <div class="col-md-12">
+                <div class="alert alert-light border">
+                    <h6>💡 Important Note</h6>
+                    <p class="mb-0 small">
+                        Career transitions vary based on individual circumstances, market conditions, and personal commitment. 
+                        This analysis provides an estimate based on general industry data. Consider consulting with career mentors, 
+                        industry professionals, or career counselors for personalized guidance.
+                    </p>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-danger">
+            <i class="ri-error-warning-line"></i>
+            Unable to generate analysis. Please try again later.
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    .card-header {
+        border-bottom: 1px solid rgba(0,0,0,0.125) !important;
+    }
+</style>
+{% endblock %}

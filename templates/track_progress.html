@@ -1,0 +1,278 @@
+{% extends 'base.html' %}
+
+{% block title %}Track Progress - {{ goal.skill.name }} - Saarthi{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Header -->
+    <div class="row mb-5">
+        <div class="col-md-8">
+            <h1 class="display-5">{{ goal.skill.name }}</h1>
+            <p class="text-muted">Track your learning progress towards {{ goal.target_proficiency|title }} proficiency</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <span class="badge bg-primary p-2 fs-6">Target: {{ goal.target_proficiency|title }}</span>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Progress Overview -->
+        <div class="col-md-8">
+            <!-- Current Progress Card -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">📊 Current Progress</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center mb-4">
+                        <div class="col-md-4">
+                            <h3 class="text-success">{{ total_hours_logged }}</h3>
+                            <p class="text-muted">Hours Logged</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h3 class="text-info">{{ estimated_hours }}</h3>
+                            <p class="text-muted">Hours Estimated</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h3 class="text-warning">
+                                {% if estimated_hours > 0 %}
+                                    {{ total_hours_logged|floatformat:0|add:"0"|multiply:100|divide:estimated_hours|floatformat:0 }}%
+                                {% else %}
+                                    0%
+                                {% endif %}
+                            </h3>
+                            <p class="text-muted">Complete</p>
+                        </div>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="mb-4">
+                        {% if estimated_hours > 0 %}
+                            {% widthratio total_hours_logged estimated_hours 100 as progress_percent %}
+                        {% else %}
+                            {% widthratio 0 1 100 as progress_percent %}
+                        {% endif %}
+                        
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar bg-success" 
+                                 style="width: {{ progress_percent }}%"
+                                 role="progressbar">
+                                {{ progress_percent }}%
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Add New Log Form -->
+                    <div class="mt-4 pt-3 border-top">
+                        <h6 class="mb-3">Log New Progress</h6>
+                        <form id="progressForm" class="row g-3">
+                            {% csrf_token %}
+                            <div class="col-md-6">
+                                <label class="form-label">Hours Completed</label>
+                                <input type="number" class="form-control" id="hoursInput" 
+                                       step="0.5" min="0" placeholder="e.g., 2.5" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Completion Percentage</label>
+                                <input type="range" class="form-range" id="percentageInput" 
+                                       min="0" max="100" value="0">
+                                <small class="text-muted"><span id="percentageDisplay">0</span>%</small>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Milestone/Notes</label>
+                                <textarea class="form-control" id="milestoneInput" 
+                                         placeholder="e.g., Completed module 5, Started practical exercises"
+                                         rows="2"></textarea>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Courses Completed (comma-separated)</label>
+                                <input type="text" class="form-control" id="coursesInput" 
+                                      placeholder="e.g., Python Basics Course, Data Structures Module">
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="ri-add-line"></i> Log Progress
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress History -->
+            {% if progress_logs %}
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">📜 Progress History</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="timeline">
+                            {% for log in progress_logs %}
+                                <div class="timeline-item mb-4 pb-3">
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <small class="text-muted">{{ log.logged_at|date:"M d, Y" }}</small>
+                                        </div>
+                                        <div class="col-md-10">
+                                            <div class="d-flex justify-content-between align-items-start">
+                                                <div>
+                                                    <p class="mb-1">
+                                                        <strong>+{{ log.hours_completed }} hours</strong>
+                                                        <span class="badge bg-info">{{ log.completed_percentage }}% done</span>
+                                                    </p>
+                                                    {% if log.milestone_reached %}
+                                                        <p class="mb-1 text-success">
+                                                            <i class="ri-award-line"></i> {{ log.milestone_reached }}
+                                                        </p>
+                                                    {% endif %}
+                                                    {% if log.courses_completed %}
+                                                        <p class="small text-muted mb-0">
+                                                            Courses: {{ log.courses_completed|join:", " }}
+                                                        </p>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% if not forloop.last %}<hr>{% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    <i class="ri-information-line"></i>
+                    No progress logged yet. Start by clicking "Log Progress" above!
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-md-4">
+            <!-- Goal Info Card -->
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Goal Details</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li class="mb-3">
+                            <small class="text-muted">Skill</small><br>
+                            <strong>{{ goal.skill.name }}</strong>
+                        </li>
+                        <li class="mb-3">
+                            <small class="text-muted">Target Level</small><br>
+                            <strong>{{ goal.target_proficiency|title }}</strong>
+                        </li>
+                        <li class="mb-3">
+                            <small class="text-muted">Estimated Total</small><br>
+                            <strong>{{ goal.estimated_hours }} hours</strong>
+                        </li>
+                        {% if goal.deadline %}
+                            <li class="mb-3">
+                                <small class="text-muted">Deadline</small><br>
+                                <strong>{{ goal.deadline|date:"M d, Y" }}</strong>
+                            </li>
+                        {% endif %}
+                        <li>
+                            <small class="text-muted">Created</small><br>
+                            <strong>{{ goal.created_at|date:"M d, Y" }}</strong>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Learning Resources -->
+            {% if goal.skill.learning_resources %}
+                <div class="card">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="mb-0">📚 Learning Resources</h5>
+                    </div>
+                    <div class="card-body">
+                        {% with resources=goal.skill.learning_resources %}
+                            {% if resources.courses %}
+                                <h6 class="mb-2">Courses</h6>
+                                <ul class="small">
+                                    {% for course in resources.courses %}
+                                        <li>{{ course }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+
+                            {% if resources.books %}
+                                <h6 class="mb-2 mt-3">Books</h6>
+                                <ul class="small">
+                                    {% for book in resources.books %}
+                                        <li>{{ book }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+
+                            {% if resources.tutorials %}
+                                <h6 class="mb-2 mt-3">Tutorials</h6>
+                                <ul class="small">
+                                    {% for tutorial in resources.tutorials %}
+                                        <li>{{ tutorial }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    // Update percentage display
+    document.getElementById('percentageInput').addEventListener('input', function() {
+        document.getElementById('percentageDisplay').textContent = this.value;
+    });
+
+    // Handle form submission
+    document.getElementById('progressForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const data = {
+            hours_completed: parseFloat(document.getElementById('hoursInput').value),
+            completion_percentage: parseInt(document.getElementById('percentageInput').value),
+            milestone: document.getElementById('milestoneInput').value,
+            courses_completed: document.getElementById('coursesInput').value
+                ? document.getElementById('coursesInput').value.split(',').map(c => c.trim())
+                : []
+        };
+
+        fetch('{% url "quiz:track_progress" goal.id %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                alert('Progress logged successfully!');
+                location.reload();
+            } else {
+                alert('Error logging progress');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+</script>
+
+<style>
+    .timeline {
+        position: relative;
+    }
+    
+    .timeline-item {
+        padding-left: 10px;
+        border-left: 3px solid #0dcaf0;
+    }
+</style>
+{% endblock %}
