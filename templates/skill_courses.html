@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ skill.name }} Courses - Saarthi{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'skill-courses.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="courses-container">
+        <a href="{{ request.META.HTTP_REFERER|default:'#' }}" class="back-link">
+            ← Back to Skills
+        </a>
+
+        <!-- Hero Section -->
+        <div class="courses-hero">
+            <h1>📚 {{ skill.name }} Courses</h1>
+            <p>Curated learning resources to master {{ skill.name }}</p>
+        </div>
+
+        <!-- Course Cards -->
+        <div class="courses-list">
+            {% for course in courses %}
+            <div class="course-card">
+                <div class="course-header">
+                    <div>
+                        <h3 class="course-title">{{ course.title }}</h3>
+                    </div>
+                    <span class="course-platform">{{ course.platform }}</span>
+                </div>
+
+                <div class="course-meta">
+                    <div class="meta-item">
+                        ⏱️ <strong>Duration:</strong> {{ course.duration }}
+                    </div>
+                    <div class="meta-item">
+                        <span class="course-level level-{{ course.level|lower }}">
+                            {{ course.level }}
+                        </span>
+                    </div>
+                </div>
+
+                <p class="course-description">
+                    {{ course.description }}
+                </p>
+
+                <div class="course-stats">
+                    <div class="course-stat">
+                        <div class="course-stat-label">Rating</div>
+                        <div class="course-stat-value rating">★ {{ course.rating }}/5</div>
+                    </div>
+                    <div class="course-stat">
+                        <div class="course-stat-label">Students</div>
+                        <div class="course-stat-value">{{ course.students|floatformat:0|stringformat:"d" }} +</div>
+                    </div>
+                </div>
+
+                <a href="{{ course.url }}" target="_blank" class="enroll-button">
+                    Enroll Now → 
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Additional Resources -->
+        <div class="learning-tips">
+            <h3>💡 Learning Tips</h3>
+            <div class="tips-grid">
+                <div class="tip-card">
+                    <div class="tip-icon">🎯</div>
+                    <div class="tip-title">Start with Basics</div>
+                    <div class="tip-description">Begin with the <strong>Beginner</strong> level course to build a solid foundation</div>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-icon">📅</div>
+                    <div class="tip-title">Practice Consistently</div>
+                    <div class="tip-description">Aim for 10-15 hours per week for best results</div>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-icon">🚀</div>
+                    <div class="tip-title">Build Projects</div>
+                    <div class="tip-description">Take on real projects after completing each course</div>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-icon">👥</div>
+                    <div class="tip-title">Join Community</div>
+                    <div class="tip-description">Connect with other learners in community forums</div>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-icon">🔄</div>
+                    <div class="tip-title">Review & Reinforce</div>
+                    <div class="tip-description">Review key concepts regularly for retention</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

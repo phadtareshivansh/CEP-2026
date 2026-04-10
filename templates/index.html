@@ -1,17 +1,353 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<!-- Welcome Screen -->
+<style>
+    #welcome-screen {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 45vh;
+        text-align: center;
+        padding: 3rem 2rem;
+    }
+
+    #welcome-screen h1 {
+        font-size: 3rem;
+        margin: 0 0 1rem 0;
+        color: white;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    #welcome-screen p {
+        font-size: 1.3rem;
+        color: rgba(255, 255, 255, 0.95);
+        margin-bottom: 2rem;
+        max-width: 600px;
+    }
+
+    #history-hint {
+        margin-top: 2rem;
+        padding: 1.2rem;
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        font-size: 1rem;
+        color: white;
+        backdrop-filter: blur(10px);
+    }
+
+    #history-hint a {
+        color: #fbbf24;
+        text-decoration: underline;
+        font-weight: 600;
+    }
+
+    /* How It Works Section */
+    .how-it-works {
+        background: white;
+        padding: 3rem 2rem;
+        margin: 2rem 1rem;
+        border-radius: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .how-it-works h2 {
+        text-align: center;
+        margin-bottom: 2rem;
+        font-size: 2rem;
+    }
+
+    .steps-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .step {
+        text-align: center;
+    }
+
+    .step-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: white;
+        border-radius: 50%;
+        font-weight: 800;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .step h3 {
+        margin: 0.5rem 0;
+        color: var(--text);
+    }
+
+    .step p {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+    }
+
+    /* Features Section */
+    .features-section {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+        padding: 3rem 2rem;
+        margin: 2rem 1rem;
+        border-radius: 20px;
+    }
+
+    .features-section h2 {
+        text-align: center;
+        margin-bottom: 2rem;
+        font-size: 2rem;
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1.5rem;
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .feature-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+    }
+
+    .feature-emoji {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .feature-card h4 {
+        margin: 0.5rem 0;
+        color: var(--text);
+        font-size: 0.95rem;
+    }
+
+    .feature-card p {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        margin: 0;
+    }
+
+    /* CTA Section */
+    .cta-section {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: white;
+        padding: 3rem 2rem;
+        margin: 2rem 1rem;
+        border-radius: 20px;
+        text-align: center;
+    }
+
+    .cta-section h2 {
+        margin: 0 0 1rem 0;
+        color: white;
+    }
+
+    .cta-section p {
+        color: rgba(255, 255, 255, 0.9);
+        margin-bottom: 2rem;
+        font-size: 1.1rem;
+    }
+
+    .cta-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .cta-buttons a {
+        text-decoration: none;
+    }
+
+    /* Stats Card */
+    .stats-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2.5rem;
+        border-radius: 16px;
+        text-align: center;
+        box-shadow: 0 4px 20px rgba(102, 126, 234, 0.2);
+        margin: 2rem auto;
+        max-width: 300px;
+    }
+
+    .stats-percentage {
+        font-size: 3.5rem;
+        font-weight: 900;
+        margin-bottom: 0.5rem;
+    }
+
+    .stats-label {
+        font-size: 1.1rem;
+        font-weight: 600;
+        opacity: 0.95;
+    }
+        #welcome-screen h1 {
+            font-size: 2rem;
+        }
+
+        #welcome-screen p {
+            font-size: 1rem;
+        }
+
+        .how-it-works,
+        .features-section,
+        .cta-section {
+            margin: 1rem 0;
+            padding: 2rem 1rem;
+        }
+
+        .steps-grid,
+        .features-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<!-- Welcome Hero Section -->
 <section id="welcome-screen">
-    <h1>Confused after 12th?</h1>
-    <p>Let Saarthi guide you to a career that matches your natural interests.</p>
-    <a href="{% url 'quiz:quiz' %}" class="btn-primary" style="display: inline-block; text-decoration: none;">Start Assessment</a>
-    <div id="history-hint" style="margin-top: 2rem; padding: 1rem; background: rgba(79, 70, 229, 0.1); border-radius: 8px; font-size: 0.9rem; color: var(--text);">
+    <h1>🎯 Confused after 12th?</h1>
+    <p>Let Saarthi guide you to a career that matches your natural interests and strengths.</p>
+    <a href="{% url 'quiz:quiz' %}" class="btn-primary" style="display: inline-block; text-decoration: none; padding: 12px 32px; font-size: 1.05rem;">
+        ✨ Start Assessment Now
+    </a>
+    <div id="history-hint">
         {% if assessment_count > 0 %}
-            <span>📊 You've completed {{ assessment_count }} assessment(s). <a href="{% url 'quiz:history' %}" style="color: var(--primary); text-decoration: underline;">View history</a></span>
+            <span>📊 You've completed {{ assessment_count }} assessment(s). <a href="{% url 'quiz:history' %}">View history</a></span>
         {% else %}
             <span>🚀 Ready to discover your ideal career path?</span>
         {% endif %}
     </div>
 </section>
+
+<!-- Stats Card Section -->
+<div class="stats-card">
+    <div class="stats-percentage" id="index-accuracy-percentage">0%</div>
+    <div class="stats-label">Career Accuracy Rate</div>
+</div>
+
+<!-- How It Works Section -->
+<div class="how-it-works">
+    <h2>How Saarthi Works</h2>
+    <div class="steps-grid">
+        <div class="step">
+            <div class="step-number">1</div>
+            <h3>Take Assessment</h3>
+            <p>Answer quick questions about your interests and skills</p>
+        </div>
+        <div class="step">
+            <div class="step-number">2</div>
+            <h3>Get Analysis</h3>
+            <p>Receive detailed RIASEC profile breakdown</p>
+        </div>
+        <div class="step">
+            <div class="step-number">3</div>
+            <h3>Explore Careers</h3>
+            <p>Discover matching career paths and opportunities</p>
+        </div>
+        <div class="step">
+            <div class="step-number">4</div>
+            <h3>Plan Future</h3>
+            <p>Create personalized learning roadmap</p>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="features-section">
+    <h2>Why Choose Saarthi?</h2>
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-emoji">🎯</div>
+            <h4>Personalized</h4>
+            <p>Tailored career matches based on your profile</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-emoji">📊</div>
+            <h4>Data-Driven</h4>
+            <p>Based on proven RIASEC assessment model</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-emoji">🚀</div>
+            <h4>Action-Ready</h4>
+            <p>Clear next steps and learning pathways</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-emoji">👥</div>
+            <h4>Expert Guidance</h4>
+            <p>Connect with mentors in your field</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-emoji">📚</div>
+            <h4>Resources</h4>
+            <p>Access curated learning materials</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-emoji">📈</div>
+            <h4>Track Progress</h4>
+            <p>Monitor your career development journey</p>
+        </div>
+    </div>
+</div>
+
+<!-- CTA Section -->
+<div class="cta-section">
+    <h2>Ready to Find Your Path?</h2>
+    <p>Join thousands of students who have discovered their ideal careers with Saarthi</p>
+    <div class="cta-buttons">
+        <a href="{% url 'quiz:quiz' %}" class="btn-primary" style="background: white; color: var(--primary);">
+            Start Assessment
+        </a>
+        <a href="{% url 'quiz:dashboard' %}" class="btn-secondary">
+            View Dashboard
+        </a>
+    </div>
+</div>
+
+<script>
+    // Animate percentage from 0 to 95
+    function animatePercentage() {
+        const element = document.getElementById('index-accuracy-percentage');
+        const duration = 3000; // 3 seconds
+        const target = 95;
+        const startTime = Date.now();
+
+        function update() {
+            const elapsed = Date.now() - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const current = Math.floor(progress * target);
+            element.textContent = current + '%';
+
+            if (progress < 1) {
+                requestAnimationFrame(update);
+            }
+        }
+
+        update();
+    }
+
+    // Start animation when page loads
+    animatePercentage();
+</script>
+
 {% endblock %}

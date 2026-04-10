@@ -184,43 +184,17 @@
             </div>
 
             <!-- Learning Resources -->
-            {% if goal.skill.learning_resources %}
-                <div class="card">
-                    <div class="card-header bg-warning text-dark">
-                        <h5 class="mb-0">📚 Learning Resources</h5>
-                    </div>
-                    <div class="card-body">
-                        {% with resources=goal.skill.learning_resources %}
-                            {% if resources.courses %}
-                                <h6 class="mb-2">Courses</h6>
-                                <ul class="small">
-                                    {% for course in resources.courses %}
-                                        <li>{{ course }}</li>
-                                    {% endfor %}
-                                </ul>
-                            {% endif %}
-
-                            {% if resources.books %}
-                                <h6 class="mb-2 mt-3">Books</h6>
-                                <ul class="small">
-                                    {% for book in resources.books %}
-                                        <li>{{ book }}</li>
-                                    {% endfor %}
-                                </ul>
-                            {% endif %}
-
-                            {% if resources.tutorials %}
-                                <h6 class="mb-2 mt-3">Tutorials</h6>
-                                <ul class="small">
-                                    {% for tutorial in resources.tutorials %}
-                                        <li>{{ tutorial }}</li>
-                                    {% endfor %}
-                                </ul>
-                            {% endif %}
-                        {% endwith %}
-                    </div>
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">📚 Learning Resources</h5>
                 </div>
-            {% endif %}
+                <div class="card-body">
+                    <p class="mb-3">Curated courses and materials to help you master <strong>{{ goal.skill.name }}</strong>:</p>
+                    <a href="{% url 'quiz:skill_courses' goal.skill.id %}" class="btn btn-primary" target="_blank">
+                        View Recommended Courses →
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </div>

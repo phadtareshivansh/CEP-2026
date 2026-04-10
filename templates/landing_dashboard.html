@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Saarthi - Find Your Pathway{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'landing-dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- Welcome Hero Section -->
+<section class="welcome-hero">
+    <h1>🎯 Find Your Pathway</h1>
+    <p>Confused about your career direction? Let Saarthi guide you to a career that truly matches your interests and strengths.</p>
+    
+    <div class="hero-buttons">
+        <a href="{% url 'quiz:quiz' %}" class="btn-primary" style="display: inline-block; text-decoration: none;">
+            ✨ Start Assessment Now
+        </a>
+        <a href="{% url 'quiz:dashboard' %}" class="btn-primary" style="display: inline-block; text-decoration: none;">
+            📊 View Dashboard
+        </a>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<div class="stats-section">
+    <div class="stats-container">
+        <!-- Accuracy Stat Card -->
+        <div class="stat-card">
+            <div class="stat-percentage" id="accuracy-percentage">98%</div>
+            <div class="stat-label">Career Accuracy Rate</div>
+        </div>
+
+        <!-- Welcome Card -->
+        <div class="welcome-card">
+            <div class="welcome-emoji">👋</div>
+            <h3 class="welcome-greeting">Welcome!</h3>
+            <p class="welcome-name">{% if user.is_authenticated %}{{ user.first_name|default:user.username }}{% else %}Explorer{% endif %}</p>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="stat-card">
+            <div class="stat-percentage" style="font-size: 2.5rem;">15 min</div>
+            <div class="stat-label">Complete Assessment</div>
+        </div>
+    </div>
+
+    <!-- Highlights Grid Below -->
+    <div class="highlights-grid" style="margin-top: 2rem;">
+        <div class="highlight-card">
+            <div class="highlight-emoji">🧠</div>
+            <h4 class="highlight-title">Smart Matching</h4>
+            <p class="highlight-desc">AI-powered recommendations</p>
+        </div>
+        <div class="highlight-card">
+            <div class="highlight-emoji">⚡</div>
+            <h4 class="highlight-title">Fast & Free</h4>
+            <p class="highlight-desc">No hidden charges</p>
+        </div>
+        <div class="highlight-card">
+            <div class="highlight-emoji">📈</div>
+            <h4 class="highlight-title">Track Progress</h4>
+            <p class="highlight-desc">Monitor your journey</p>
+        </div>
+        <div class="highlight-card">
+            <div class="highlight-emoji">👥</div>
+            <h4 class="highlight-title">Community</h4>
+            <p class="highlight-desc">Connect with peers</p>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="features-section">
+    <h2>Why Choose Saarthi?</h2>
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-emoji">🎯</div>
+            <h4>Personalized</h4>
+            <p>Tailored to your profile</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-emoji">📊</div>
+            <h4>Data-Driven</h4>
+            <p>RIASEC assessment model</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-emoji">🚀</div>
+            <h4>Action-Ready</h4>
+            <p>Clear next steps</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-emoji">👥</div>
+            <h4>Expert Guidance</h4>
+            <p>Connect with mentors</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-emoji">📚</div>
+            <h4>Resources</h4>
+            <p>Curated materials</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-emoji">📈</div>
+            <h4>Track Progress</h4>
+            <p>Development journey</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Animate percentage from 0 to 98
+    function animatePercentage() {
+        const element = document.getElementById('accuracy-percentage');
+        const duration = 2500; // 2.5 seconds
+        const target = 98;
+        const startTime = Date.now();
+
+        function update() {
+            const elapsed = Date.now() - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const current = Math.floor(progress * target);
+            element.textContent = current + '%';
+
+            if (progress < 1) {
+                requestAnimationFrame(update);
+            }
+        }
+
+        update();
+    }
+
+    // Start animation when page loads
+    animatePercentage();
+</script>
+
+{% endblock %}

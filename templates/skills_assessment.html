@@ -393,13 +393,9 @@
                     • 📊 Industry Demand: {{ skill.industry_demand|floatformat:1 }}/10
                     • Category: {{ skill.category }}
                 </p>
-                {% if skill.resources %}
                 <p style="margin-top: 0.75rem; margin-bottom: 0;">
-                    {% for resource in skill.resources %}
-                    <a href="{{ resource }}" target="_blank" class="resource-link">📚 Resource {{ forloop.counter }}</a>
-                    {% endfor %}
+                    <a href="{% url 'quiz:skill_courses' skill.skill.id %}" class="resource-link">📚 View Courses</a>
                 </p>
-                {% endif %}
             </div>
         </div>
         {% endfor %}

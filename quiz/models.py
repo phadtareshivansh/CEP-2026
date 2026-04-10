@@ -236,6 +236,10 @@ class ForumPost(models.Model):
     content = models.TextField()
     views = models.IntegerField(default=0)
     upvotes = models.IntegerField(default=0)
+    is_closed = models.BooleanField(default=False)
+    closed_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='closed_posts')
+    closed_at = models.DateTimeField(null=True, blank=True)
+    close_reason = models.TextField(blank=True, default='')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
