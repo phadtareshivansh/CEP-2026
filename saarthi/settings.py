@@ -9,7 +9,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Environment detection
 DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'  # Default to True for development
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,cep-2026-ivory.vercel.app,*.vercel.app').split(',')
+
+# Build ALLOWED_HOSTS - WSGI wrapper handles dynamic Vercel preview URLs
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'cep-2026-ivory.vercel.app']
+
+# Support environment variable for explicit hosts
+env_hosts = os.environ.get('ALLOWED_HOSTS', '')
+if env_hosts:
+    ALLOWED_HOSTS.extend(env_hosts.split(','))
 
 # Security settings for production
 if not DEBUG:
