@@ -126,9 +126,12 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 # WhiteNoise configuration for efficient static file serving
-# Use CompressedStaticFilesStorage instead of CompressedManifestStaticFilesStorage
-# because Vercel's serverless doesn't need manifest tracking
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+# Use CompressedManifestStaticFilesStorage to properly hash files and create manifest
+# WhiteNoise will automatically serve files from staticfiles directory
+if not DEBUG:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+else:
+    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
