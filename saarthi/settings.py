@@ -94,6 +94,11 @@ if database_url and database_url.strip():  # Only use if DATABASE_URL is actuall
                 conn_health_checks=True,
             )
         }
+        # Add connection options to handle IPv4 and SSL for Vercel/serverless environments
+        DATABASES['default']['OPTIONS'] = {
+            'sslmode': 'require',
+            'connect_timeout': 10,
+        }
     except ValueError:
         # Fallback to SQLite if DATABASE_URL is invalid (e.g., during build without env vars)
         DATABASES = {
