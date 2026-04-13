@@ -480,28 +480,105 @@ def profile(request):
 
 def get_questions(request):
     """
-    Fetch quiz questions from Node.js backend API.
-    Returns JSON with questions for the current assessment.
+    Fetch quiz questions.
+    Returns JSON with RIASEC career assessment questions.
     """
-    try:
-        response = requests.get(
-            f'{settings.BACKEND_API_URL}/get-questions',
-            timeout=10
-        )
-        response.raise_for_status()
-        questions = response.json()
+    # Mock questions for RIASEC career assessment
+    questions = [
+        # REALISTIC (working with hands, tools, fixing things)
+        {
+            "question": "Do you enjoy building or fixing things with your hands?",
+            "riasec_mapping": {"Realistic": 0.8, "Investigative": 0.1, "Artistic": 0.05, "Social": 0.05, "Enterprising": 0.0, "Conventional": 0.0}
+        },
+        {
+            "question": "Would you prefer working outdoors in nature vs. in an office?",
+            "riasec_mapping": {"Realistic": 0.7, "Investigative": 0.1, "Artistic": 0.1, "Social": 0.05, "Enterprising": 0.05, "Conventional": 0.0}
+        },
+        {
+            "question": "Do you like working with machines, tools, or mechanical systems?",
+            "riasec_mapping": {"Realistic": 0.85, "Investigative": 0.1, "Artistic": 0.0, "Social": 0.0, "Enterprising": 0.05, "Conventional": 0.0}
+        },
         
-        # Normalize response format
-        if isinstance(questions, dict):
-            questions = questions.get('questions', [])
+        # INVESTIGATIVE (research, analysis, problem-solving)
+        {
+            "question": "Do you like solving complex problems and conducting research?",
+            "riasec_mapping": {"Realistic": 0.1, "Investigative": 0.8, "Artistic": 0.05, "Social": 0.0, "Enterprising": 0.05, "Conventional": 0.0}
+        },
+        {
+            "question": "Do you enjoy analyzing data and finding patterns?",
+            "riasec_mapping": {"Realistic": 0.0, "Investigative": 0.85, "Artistic": 0.0, "Social": 0.0, "Enterprising": 0.1, "Conventional": 0.05}
+        },
+        {
+            "question": "Would you prefer a career that requires continuous learning and discovery?",
+            "riasec_mapping": {"Realistic": 0.05, "Investigative": 0.8, "Artistic": 0.1, "Social": 0.0, "Enterprising": 0.05, "Conventional": 0.0}
+        },
         
-        return JsonResponse({'questions': questions})
+        # ARTISTIC (creative expression, innovation, design)
+        {
+            "question": "Do you love creative expression like art, music, design, or writing?",
+            "riasec_mapping": {"Realistic": 0.0, "Investigative": 0.05, "Artistic": 0.9, "Social": 0.0, "Enterprising": 0.05, "Conventional": 0.0}
+        },
+        {
+            "question": "Do you like working on projects that allow you to express your creativity?",
+            "riasec_mapping": {"Realistic": 0.05, "Investigative": 0.0, "Artistic": 0.85, "Social": 0.05, "Enterprising": 0.05, "Conventional": 0.0}
+        },
+        {
+            "question": "Would you prefer a job that involves innovation and breaking conventional rules?",
+            "riasec_mapping": {"Realistic": 0.0, "Investigative": 0.1, "Artistic": 0.75, "Social": 0.05, "Enterprising": 0.1, "Conventional": 0.0}
+        },
         
-    except requests.RequestException as e:
-        return JsonResponse(
-            {'error': 'Unable to fetch questions'},
-            status=500
-        )
+        # SOCIAL (helping people, teamwork, communication)
+        {
+            "question": "Do you enjoy helping others and supporting people's growth?",
+            "riasec_mapping": {"Realistic": 0.0, "Investigative": 0.0, "Artistic": 0.05, "Social": 0.85, "Enterprising": 0.1, "Conventional": 0.0}
+        },
+        {
+            "question": "Do you prefer working in teams vs. working alone?",
+            "riasec_mapping": {"Realistic": 0.05, "Investigative": 0.05, "Artistic": 0.05, "Social": 0.75, "Enterprising": 0.1, "Conventional": 0.0}
+        },
+        {
+            "question": "Would you rather work in roles where you can directly impact people's lives?",
+            "riasec_mapping": {"Realistic": 0.0, "Investigative": 0.0, "Artistic": 0.1, "Social": 0.8, "Enterprising": 0.05, "Conventional": 0.05}
+        },
+        
+        # ENTERPRISING (leadership, persuasion, ambition)
+        {
+            "question": "Do you like taking charge and leading projects or teams?",
+            "riasec_mapping": {"Realistic": 0.05, "Investigative": 0.0, "Artistic": 0.0, "Social": 0.15, "Enterprising": 0.8, "Conventional": 0.0}
+        },
+        {
+            "question": "Do you have a natural ability to persuade and influence others?",
+            "riasec_mapping": {"Realistic": 0.0, "Investigative": 0.0, "Artistic": 0.05, "Social": 0.2, "Enterprising": 0.75, "Conventional": 0.0}
+        },
+        {
+            "question": "Would you prefer pursuing ambitious goals and climbing the ladder?",
+            "riasec_mapping": {"Realistic": 0.0, "Investigative": 0.0, "Artistic": 0.0, "Social": 0.1, "Enterprising": 0.85, "Conventional": 0.05}
+        },
+        
+        # CONVENTIONAL (organization, order, detail-oriented)
+        {
+            "question": "Do you prefer working in well-organized, structured environments?",
+            "riasec_mapping": {"Realistic": 0.1, "Investigative": 0.05, "Artistic": 0.0, "Social": 0.0, "Enterprising": 0.05, "Conventional": 0.8}
+        },
+        {
+            "question": "Do you have strong attention to detail and accuracy?",
+            "riasec_mapping": {"Realistic": 0.1, "Investigative": 0.15, "Artistic": 0.0, "Social": 0.0, "Enterprising": 0.0, "Conventional": 0.75}
+        },
+        {
+            "question": "Would you prefer following clear procedures and guidelines over improvisation?",
+            "riasec_mapping": {"Realistic": 0.1, "Investigative": 0.05, "Artistic": 0.0, "Social": 0.0, "Enterprising": 0.0, "Conventional": 0.85}
+        },
+        {
+            "question": "Do you excel at administrative tasks and managing information systems?",
+            "riasec_mapping": {"Realistic": 0.05, "Investigative": 0.15, "Artistic": 0.0, "Social": 0.0, "Enterprising": 0.0, "Conventional": 0.8}
+        },
+        {
+            "question": "Do you prefer stability and predictability in your career over uncertainty?",
+            "riasec_mapping": {"Realistic": 0.1, "Investigative": 0.05, "Artistic": 0.0, "Social": 0.05, "Enterprising": 0.0, "Conventional": 0.8}
+        }
+    ]
+    
+    return JsonResponse(questions, safe=False)
 
 
 def start_assessment(request):
