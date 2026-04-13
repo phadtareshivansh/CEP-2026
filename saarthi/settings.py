@@ -98,6 +98,12 @@ if database_url and database_url.strip():  # Only use if DATABASE_URL is actuall
         DATABASES['default']['OPTIONS'] = {
             'sslmode': 'require',
             'connect_timeout': 10,
+            'tcp_user_timeout': 30000,  # 30 seconds TCP timeout
+            'keepalives': 1,
+            'keepalives_idle': 10,
+            'keepalives_interval': 5,
+            'keepalives_count': 3,
+            'statement_timeout': '30s',
         }
     except ValueError:
         # Fallback to SQLite if DATABASE_URL is invalid (e.g., during build without env vars)
