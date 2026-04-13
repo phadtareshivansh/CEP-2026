@@ -177,7 +177,8 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Store in database for 
 SESSION_COOKIE_AGE = 1800  # 30 minutes in seconds
 SESSION_COOKIE_HTTPONLY = True  # Prevent JS access to session cookie
 SESSION_COOKIE_SECURE = not DEBUG  # True in production, False in development
-SESSION_COOKIE_SAMESITE = 'Lax'  # CSRF protection
+SESSION_COOKIE_SAMESITE = 'None' if not DEBUG else 'Lax'  # None for cross-site on Vercel, Lax for dev
+SESSION_COOKIE_DOMAIN = None  # Let Django handle domain
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Session expires when browser closes
 SESSION_SAVE_EVERY_REQUEST = True  # Update last activity timestamp
 

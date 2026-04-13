@@ -872,6 +872,7 @@ def clear_quiz_session(request):
 # ===============================================================================
 
 @login_required(login_url='quiz:login')
+@login_required(login_url='login')
 def skills_assessment(request):
     """
     Advanced skills gap analysis with learning path recommendations.
