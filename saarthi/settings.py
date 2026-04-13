@@ -81,23 +81,35 @@ TEMPLATES = [
 WSGI_APPLICATION = 'saarthi.wsgi.application'
 
 # Database configuration for local dev (SQLite) and production (PostgreSQL)
-if os.environ.get('DATABASE_URL'):
+database_url = os.environ.get('DATABASE_URL')
+
+if database_url and database_url.strip():  # Only use if DATABASE_URL is actually set and not empty
     # Production: Use PostgreSQL (from environment variable)
     import dj_database_url
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=os.environ.get('DATABASE_URL'),
-            conn_max_age=600,
-            conn_health_checks=True,
-        )
-    }
+    try:
+        DATABASES = {
+            'default': dj_database_url.config(
+                default=database_url,
+                conn_max_age=600,
+                conn_health_checks=True,
+            )
+        }
+    except ValueError:
+        # Fallback to SQLite if DATABASE_URL is invalid (e.g., during build without env vars)
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
 else:
-    # Development: Use SQLite
+    # Development/Build: Use SQLite
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / 'db.sqlite3',
         }
+    }
     }
 
 AUTH_PASSWORD_VALIDATORS = [
