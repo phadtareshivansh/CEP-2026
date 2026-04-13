@@ -94,16 +94,11 @@ if database_url and database_url.strip():  # Only use if DATABASE_URL is actuall
                 conn_health_checks=True,
             )
         }
-        # Add connection options to handle IPv4 and SSL for Vercel/serverless environments
+        # Add connection options to handle SSL for Vercel/serverless environments
+        # Only use valid psycopg2 connection parameters
         DATABASES['default']['OPTIONS'] = {
             'sslmode': 'require',
             'connect_timeout': 10,
-            'tcp_user_timeout': 30000,  # 30 seconds TCP timeout
-            'keepalives': 1,
-            'keepalives_idle': 10,
-            'keepalives_interval': 5,
-            'keepalives_count': 3,
-            'statement_timeout': '30s',
         }
     except ValueError:
         # Fallback to SQLite if DATABASE_URL is invalid (e.g., during build without env vars)
