@@ -1,0 +1,427 @@
+/* ============================================================================
+   SKILL COURSES STYLES
+   Organized CSS for skill_courses.html template
+   ============================================================================ */
+
+/* ===== COURSES HERO SECTION ===== */
+.courses-hero {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 3rem 2rem;
+    border-radius: 16px;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.2);
+    text-align: center;
+}
+
+.courses-hero h1 {
+    margin: 0 0 0.5rem 0;
+    font-size: 2.5rem;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.courses-hero p {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 1.1rem;
+    line-height: 1.5;
+}
+
+/* ===== COURSE CARDS CONTAINER ===== */
+.courses-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+.course-card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+}
+
+.course-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(102, 126, 234, 0.15);
+}
+
+/* ===== COURSE CARD HEADER ===== */
+.course-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    gap: 1rem;
+}
+
+.course-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+}
+
+.course-platform {
+    font-size: 0.85rem;
+    color: white;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: #667eea;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+
+.course-meta {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #f0f0f0;
+    flex-wrap: wrap;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: #6b7280;
+}
+
+.meta-icon {
+    font-size: 1rem;
+}
+
+/* ===== COURSE DESCRIPTION ===== */
+.course-description {
+    font-size: 0.95rem;
+    color: #6b7280;
+    line-height: 1.6;
+    margin: 1rem 0;
+    flex-grow: 1;
+}
+
+/* ===== COURSE RATINGS ===== */
+.course-rating {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+
+.course-stats {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+.course-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.course-stat-label {
+    color: #999;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+.course-stat-value {
+    color: #1f2937;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.rating {
+    color: #f59e0b;
+    font-weight: 600;
+}
+
+/* ===== LEVEL BADGE ===== */
+.course-level {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.5rem 0.75rem;
+    border-radius: 12px;
+    margin: 1rem 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.level-beginner {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.level-intermediate {
+    background: #fef08a;
+    color: #854d0e;
+}
+
+.level-advanced {
+    background: #fecaca;
+    color: #7f1d1d;
+}
+
+/* ===== COURSE FOOTER/BUTTONS ===== */
+.course-footer {
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid #f0f0f0;
+}
+
+.enroll-button {
+    width: 100%;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    font-size: 0.95rem;
+}
+
+.enroll-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(102, 126, 234, 0.3);
+    color: white;
+    text-decoration: none;
+}
+
+.enroll-button:active {
+    transform: translateY(-1px);
+}
+
+/* ===== LEARNING TIPS SECTION ===== */
+.learning-tips {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+    padding: 2rem;
+    border-radius: 16px;
+    margin-top: 3rem;
+}
+
+.learning-tips h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 1.5rem;
+}
+
+.tips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.tip-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border-left: 4px solid #667eea;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.tip-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.tip-title {
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+}
+
+.tip-description {
+    font-size: 0.9rem;
+    color: #6b7280;
+    line-height: 1.5;
+}
+
+/* ===== EMPTY STATE ===== */
+.no-courses {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.no-courses-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.no-courses-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+}
+
+.no-courses-text {
+    color: #6b7280;
+    margin-bottom: 2rem;
+}
+
+/* ===== BREADCRUMB/NAVIGATION ===== */
+.skill-breadcrumb {
+    margin-bottom: 2rem;
+    font-size: 0.95rem;
+}
+
+.skill-breadcrumb a {
+    color: #667eea;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.skill-breadcrumb a:hover {
+    color: #764ba2;
+    text-decoration: underline;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #667eea;
+    text-decoration: none;
+    margin-bottom: 2rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.back-link:hover {
+    gap: 0.8rem;
+}
+
+.courses-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* ===== FILTER/SORT SECTION ===== */
+.courses-filter {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.filter-button {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 2px solid #e5e7eb;
+    background: white;
+    color: #6b7280;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.filter-button:hover {
+    border-color: #667eea;
+    color: #667eea;
+    background: rgba(102, 126, 234, 0.05);
+}
+
+.filter-button.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: #667eea;
+}
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .courses-hero {
+        padding: 2rem 1rem;
+    }
+
+    .courses-hero h1 {
+        font-size: 2rem;
+    }
+
+    .courses-hero p {
+        font-size: 1rem;
+    }
+
+    .courses-container {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .course-card {
+        padding: 1.5rem;
+    }
+
+    .learning-tips {
+        padding: 1.5rem;
+    }
+
+    .tips-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .courses-filter {
+        flex-direction: column;
+    }
+
+    .filter-button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .courses-hero {
+        padding: 1.5rem 1rem;
+    }
+
+    .courses-hero h1 {
+        font-size: 1.5rem;
+    }
+
+    .course-title {
+        font-size: 1.1rem;
+    }
+
+    .course-meta {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .enroll-button {
+        padding: 10px 14px;
+        font-size: 0.9rem;
+    }
+
+    .learning-tips h3 {
+        font-size: 1.2rem;
+    }
+}
